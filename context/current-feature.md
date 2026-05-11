@@ -20,4 +20,5 @@ Not Started
 
 <!-- Keep this updated. Earliest to latest -->
 
+- Initial Next.js setup
 - Project setup and boilerplate cleanup
