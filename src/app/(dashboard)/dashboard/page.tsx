@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { items, collections, itemTypes } from "@/lib/mock-data";
+import { items, itemTypes } from "@/lib/mock-data";
+import { getDemoUser, getDashboardStats, getRecentCollections } from "@/lib/db/collections";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,15 +35,44 @@ function getItemIconAndColor(itemTypeId: string) {
   return { Icon, color: type.color, name: type.name };
 }
 
-export default function DashboardPage() {
-  const totalItems = items.length;
-  const totalCollections = collections.length;
-  const favoriteItems = items.filter((item) => item.isFavorite).length;
-  const favoriteCollections = collections.filter((col) => col.isFavorite).length;
+export default async function DashboardPage() {
+  const user = await getDemoUser();
+  if (!user) return <div>User not found</div>;
 
-  const recentCollections = [...collections]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 3);
+  const stats = await getDashboardStats(user.id);
+  const dbRecentCollections = await getRecentCollections(user.id, 6);
+
+  const collectionsWithMeta = dbRecentCollections.map(col => {
+    const typeCounts: Record<string, { count: number, color: string }> = {};
+    const iconsMap = new Map<string, { Icon: any, color: string, name: string }>();
+
+    col.items.forEach(ic => {
+      const t = ic.item.itemType;
+      if (t) {
+        if (!typeCounts[t.name]) {
+          typeCounts[t.name] = { count: 0, color: t.color };
+        }
+        typeCounts[t.name].count++;
+        
+        const IconComponent = iconMap[t.icon as keyof typeof iconMap];
+        if (IconComponent && !iconsMap.has(t.name)) {
+          iconsMap.set(t.name, { Icon: IconComponent, color: t.color, name: t.name });
+        }
+      }
+    });
+
+    let primaryColor: string | undefined = undefined;
+    if (Object.keys(typeCounts).length > 0) {
+      const mostUsed = Object.entries(typeCounts).sort((a, b) => b[1].count - a[1].count)[0];
+      primaryColor = mostUsed[1].color;
+    }
+
+    return {
+      ...col,
+      borderColor: primaryColor,
+      icons: Array.from(iconsMap.values())
+    };
+  });
 
   const pinnedItems = items.filter((item) => item.isPinned);
 
@@ -65,7 +95,7 @@ export default function DashboardPage() {
             <File className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalItems}</div>
+            <div className="text-2xl font-bold">{stats.totalItems}</div>
           </CardContent>
         </Card>
         <Card>
@@ -74,7 +104,7 @@ export default function DashboardPage() {
             <Folder className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCollections}</div>
+            <div className="text-2xl font-bold">{stats.totalCollections}</div>
           </CardContent>
         </Card>
         <Card>
@@ -83,7 +113,7 @@ export default function DashboardPage() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{favoriteItems}</div>
+            <div className="text-2xl font-bold">{stats.favoriteItems}</div>
           </CardContent>
         </Card>
         <Card>
@@ -92,7 +122,7 @@ export default function DashboardPage() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{favoriteCollections}</div>
+            <div className="text-2xl font-bold">{stats.favoriteCollections}</div>
           </CardContent>
         </Card>
       </div>
@@ -106,10 +136,13 @@ export default function DashboardPage() {
               View all
             </Link>
           </div>
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-            {recentCollections.map((col) => (
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {collectionsWithMeta.map((col) => (
               <Link key={col.id} href={`/collections/${col.id}`}>
-                <Card className="hover:bg-muted/50 transition-colors border-border/50 shadow-sm">
+                <Card 
+                  className="hover:bg-muted/50 transition-colors shadow-sm h-full"
+                  style={{ borderTopColor: col.borderColor || undefined, borderTopWidth: col.borderColor ? '3px' : '1px' }}
+                >
                   <CardHeader className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -122,6 +155,18 @@ export default function DashboardPage() {
                       <CardDescription className="text-xs mt-1 truncate">
                         {col.description}
                       </CardDescription>
+                    )}
+                    {col.icons.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-3">
+                        {col.icons.map((iconData, idx) => (
+                          <iconData.Icon 
+                            key={idx} 
+                            className="h-3.5 w-3.5" 
+                            style={{ color: iconData.color }} 
+                            title={iconData.name}
+                          />
+                        ))}
+                      </div>
                     )}
                   </CardHeader>
                 </Card>

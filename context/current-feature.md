@@ -1,6 +1,6 @@
 # Current Feature
 
-Seed Sample Data
+Dashboard Collections
 
 ## Status
 
@@ -12,16 +12,20 @@ Completed
 
 <!-- Goals & requirements -->
 
-- Create a seed script at `prisma/seed.ts`.
-- Populate demo user, system item types, and various collections/items.
-- Use `bcryptjs` to hash the user password.
+- Replace dummy collection data in the main dashboard area with actual data from the database using Prisma.
+- Create `src/lib/db/collections.ts` with data fetching functions.
+- Fetch collections directly in the server component.
+- Collection card border color derived from most-used content type in that collection.
+- Show small icons of all types in that collection.
+- Update collection stats display.
+- Keep the current design.
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Reference `@context/features/seed-spec.md` for specific data requirements.
-- Use the `prisma/schema.prisma` structure to define the data.
+- Do not add the items underneath yet.
+- Reference `@context/screenshots/dashboard-ui-main.png` if needed, but layout and design is already there.
 
 ## History
 
@@ -34,3 +38,4 @@ Completed
 - Dashboard UI Phase 3: Main dashboard area with stats, recent collections, pinned items, and recent items grids
 - Prisma + Neon PostgreSQL Setup
 - Seed Sample Data
+- Dashboard Collections
