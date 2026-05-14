@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard Collections
+Dashboard Items
 
 ## Status
 
@@ -12,19 +12,19 @@ Completed
 
 <!-- Goals & requirements -->
 
-- Replace dummy collection data in the main dashboard area with actual data from the database using Prisma.
-- Create `src/lib/db/collections.ts` with data fetching functions.
-- Fetch collections directly in the server component.
-- Collection card border color derived from most-used content type in that collection.
-- Show small icons of all types in that collection.
-- Update collection stats display.
-- Keep the current design.
+- Replace dummy item data displayed in the main dashboard area with actual data from the database using Prisma.
+- Include both pinned and recent items.
+- Create `src/lib/db/items.ts` with data fetching functions.
+- Fetch items directly in the server component.
+- Derive item card icon and border from the item type.
+- Display item type tags and maintain current design elements.
+- Update collection stats display if necessary.
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Do not add the items underneath yet.
+- If there are no pinned items, the pinned section should not display.
 - Reference `@context/screenshots/dashboard-ui-main.png` if needed, but layout and design is already there.
 
 ## History
@@ -39,3 +39,4 @@ Completed
 - Prisma + Neon PostgreSQL Setup
 - Seed Sample Data
 - Dashboard Collections
+- Dashboard Items

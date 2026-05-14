@@ -70,6 +70,7 @@ async function main() {
         description: 'A custom hook for localStorage.',
         language: 'typescript',
         userId: user.id,
+        isPinned: true,
         itemTypeId: itemTypes['snippet'],
         collections: { create: { collectionId: reactCollection.id } }
       }
@@ -215,6 +216,7 @@ async function main() {
         description: 'Undo the last commit while keeping changes staged.',
         language: 'bash',
         userId: user.id,
+        isPinned: true,
         itemTypeId: itemTypes['command'],
         collections: { create: { collectionId: terminalCollection.id } }
       }

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { items, itemTypes } from "@/lib/mock-data";
 import { getDemoUser, getDashboardStats, getRecentCollections } from "@/lib/db/collections";
+import { getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,12 +28,7 @@ const iconMap = {
   Link: LinkIcon,
 } as const;
 
-function getItemIconAndColor(itemTypeId: string) {
-  const type = itemTypes.find((t) => t.id === itemTypeId);
-  if (!type) return { Icon: File, color: "#6b7280" };
-  const Icon = iconMap[type.icon as keyof typeof iconMap] || File;
-  return { Icon, color: type.color, name: type.name };
-}
+
 
 export default async function DashboardPage() {
   const user = await getDemoUser();
@@ -74,11 +69,8 @@ export default async function DashboardPage() {
     };
   });
 
-  const pinnedItems = items.filter((item) => item.isPinned);
-
-  const recentItems = [...items]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 10);
+  const pinnedItems = await getPinnedItems(user.id);
+  const recentItems = await getRecentItems(user.id, 10);
 
   return (
     <div className="space-y-6">
@@ -176,41 +168,48 @@ export default async function DashboardPage() {
         </div>
 
         {/* Pinned Items */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold tracking-tight">Pinned Items</h2>
-          </div>
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {pinnedItems.map((item) => {
-              const { Icon, color, name } = getItemIconAndColor(item.itemTypeId);
-              return (
-                <Link key={item.id} href={`/items/${item.id}`}>
-                  <Card className="hover:bg-muted/50 transition-colors border-border/50 shadow-sm">
-                    <CardHeader className="p-4 flex flex-row items-start justify-between space-y-0 gap-4">
-                      <div className="space-y-1 overflow-hidden">
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4 shrink-0" style={{ color }} />
-                          <CardTitle className="text-sm font-medium truncate">{item.title}</CardTitle>
+        {pinnedItems.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold tracking-tight">Pinned Items</h2>
+            </div>
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {pinnedItems.map((item) => {
+                const Icon = iconMap[item.itemType.icon as keyof typeof iconMap] || File;
+                const color = item.itemType.color;
+                
+                return (
+                  <Link key={item.id} href={`/items/${item.id}`}>
+                    <Card 
+                      className="hover:bg-muted/50 transition-colors shadow-sm"
+                      style={{ borderTopColor: color, borderTopWidth: '3px' }}
+                    >
+                      <CardHeader className="p-4 flex flex-row items-start justify-between space-y-0 gap-4">
+                        <div className="space-y-1 overflow-hidden">
+                          <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4 shrink-0" style={{ color }} />
+                            <CardTitle className="text-sm font-medium truncate">{item.title}</CardTitle>
+                          </div>
+                          <CardDescription className="text-xs truncate">
+                            {item.description || "No description"}
+                          </CardDescription>
                         </div>
-                        <CardDescription className="text-xs truncate">
-                          {item.description || "No description"}
-                        </CardDescription>
-                      </div>
-                      <div className="flex flex-col items-end gap-2 shrink-0">
-                        <Pin className="h-3 w-3 fill-muted-foreground text-muted-foreground" />
-                        {item.language && (
-                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                            {item.language}
-                          </Badge>
-                        )}
-                      </div>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              );
-            })}
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <Pin className="h-3 w-3 fill-muted-foreground text-muted-foreground" />
+                          {item.language && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                              {item.language}
+                            </Badge>
+                          )}
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Recent Items */}
@@ -223,10 +222,16 @@ export default async function DashboardPage() {
         </div>
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {recentItems.map((item) => {
-            const { Icon, color, name } = getItemIconAndColor(item.itemTypeId);
+            const Icon = iconMap[item.itemType.icon as keyof typeof iconMap] || File;
+            const color = item.itemType.color;
+            const name = item.itemType.name;
+
             return (
               <Link key={item.id} href={`/items/${item.id}`}>
-                <Card className="hover:bg-muted/50 transition-colors border-border/50 shadow-sm h-full flex flex-col">
+                <Card 
+                  className="hover:bg-muted/50 transition-colors shadow-sm h-full flex flex-col"
+                  style={{ borderLeftColor: color, borderLeftWidth: '3px' }}
+                >
                   <CardHeader className="p-4 pb-2 flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-2 max-w-[80%]">
