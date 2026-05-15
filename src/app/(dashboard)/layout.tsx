@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   const { favorites, recents } = await getSidebarCollections(user.id);
 
   const sidebarProps = {
-    user: { name: user.name, email: user.email },
+    user: { name: user.name ?? "", email: user.email },
     itemTypes,
     favoriteCollections: favorites,
     recentCollections: recents
