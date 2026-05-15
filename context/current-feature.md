@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard Items
+Stats & Sidebar
 
 ## Status
 
@@ -12,20 +12,19 @@ Completed
 
 <!-- Goals & requirements -->
 
-- Replace dummy item data displayed in the main dashboard area with actual data from the database using Prisma.
-- Include both pinned and recent items.
-- Create `src/lib/db/items.ts` with data fetching functions.
-- Fetch items directly in the server component.
-- Derive item card icon and border from the item type.
-- Display item type tags and maintain current design elements.
-- Update collection stats display if necessary.
+- Show the stats in the main dashboard area from the database.
+- Display system item types in the sidebar with their icons, linking to `/items/[typename]`.
+- Display actual collection data from the database in the sidebar.
+- Add a "View all collections" link under the collections list that goes to `/collections`.
+- Keep star icons for favorite collections.
+- For recent collections in the sidebar, show a colored circle based on the most-used item type in that collection.
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- If there are no pinned items, the pinned section should not display.
-- Reference `@context/screenshots/dashboard-ui-main.png` if needed, but layout and design is already there.
+- Keep the current design/layout.
+- Update/add database functions in `src/lib/db/items.ts` and use `src/lib/db/collections.ts` for reference.
 
 ## History
 
@@ -40,3 +39,4 @@ Completed
 - Seed Sample Data
 - Dashboard Collections
 - Dashboard Items
+- Stats & Sidebar

@@ -17,7 +17,6 @@ import {
   ChevronDown,
   Folder
 } from "lucide-react";
-import { itemTypes, itemTypeCounts, collections, currentUser } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -33,21 +32,26 @@ const iconMap = {
   Link: LinkIcon,
 } as const;
 
-const favoriteCollections = collections.filter((c) => c.isFavorite);
-const recentCollections = collections.filter((c) => !c.isFavorite);
-
-const userInitials = currentUser.name
-  .split(" ")
-  .map((n) => n[0])
-  .join("");
+export interface SidebarData {
+  user: { name: string; email: string };
+  itemTypes: Array<{ id: string; name: string; icon: string; color: string; count: number }>;
+  favoriteCollections: Array<{ id: string; name: string }>;
+  recentCollections: Array<{ id: string; name: string; itemCount: number; color: string }>;
+}
 
 interface SidebarContentProps {
   onClose?: () => void;
   isCollapsed?: boolean;
+  data: SidebarData;
 }
 
-function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
+function SidebarContent({ onClose, isCollapsed, data }: SidebarContentProps) {
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(true);
+
+  const userInitials = data.user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("");
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -60,7 +64,7 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
             </p>
           )}
           <nav className="space-y-0.5">
-            {itemTypes.map((type) => {
+            {data.itemTypes.map((type) => {
               const Icon = iconMap[type.icon as keyof typeof iconMap];
               return (
                 <Link
@@ -79,7 +83,7 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
                     )}
                     {!isCollapsed && <span className="capitalize">{type.name}s</span>}
                   </div>
-                  {!isCollapsed && <span className="text-xs">{itemTypeCounts[type.name]}</span>}
+                  {!isCollapsed && <span className="text-xs">{type.count}</span>}
                 </Link>
               );
             })}
@@ -115,11 +119,11 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
 
           {isCollectionsOpen && (
             <div className="space-y-3 mt-1">
-              {favoriteCollections.length > 0 && (
+              {data.favoriteCollections.length > 0 && (
                 <div>
                   {!isCollapsed && <p className="text-xs text-muted-foreground px-2 mb-1">Favorites</p>}
                   <nav className="space-y-0.5">
-                    {favoriteCollections.map((col) => (
+                    {data.favoriteCollections.map((col) => (
                       <Link
                         key={col.id}
                         href={`/collections/${col.id}`}
@@ -141,7 +145,7 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
               <div>
                 {!isCollapsed && <p className="text-xs text-muted-foreground px-2 mb-1">All Collections</p>}
                 <nav className="space-y-0.5">
-                  {recentCollections.map((col) => (
+                  {data.recentCollections.map((col) => (
                     <Link
                       key={col.id}
                       href={`/collections/${col.id}`}
@@ -153,16 +157,30 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
                       title={isCollapsed ? col.name : undefined}
                     >
                       {isCollapsed ? (
-                        <Folder className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: col.color }} />
                       ) : (
                         <>
-                          <span className="truncate">{col.name}</span>
-                          <span className="text-xs">{col.itemCount}</span>
+                          <div className="flex items-center gap-2 truncate">
+                            <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: col.color }} />
+                            <span className="truncate">{col.name}</span>
+                          </div>
+                          <span className="text-xs shrink-0">{col.itemCount}</span>
                         </>
                       )}
                     </Link>
                   ))}
                 </nav>
+                {!isCollapsed && (
+                  <div className="mt-4 px-2">
+                    <Link
+                      href="/collections"
+                      onClick={onClose}
+                      className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors"
+                    >
+                      View all collections
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -178,8 +196,8 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
           {!isCollapsed && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium truncate">{currentUser.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{currentUser.email}</p>
+                <p className="text-xs font-medium truncate">{data.user.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{data.user.email}</p>
               </div>
               <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0">
                 <Settings className="h-3.5 w-3.5" />
@@ -195,9 +213,10 @@ function SidebarContent({ onClose, isCollapsed }: SidebarContentProps) {
 interface SidebarProps {
   mobileOpen: boolean;
   onMobileClose: () => void;
+  data: SidebarData;
 }
 
-export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ mobileOpen, onMobileClose, data }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -226,7 +245,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             )}
           </Button>
         </div>
-        <SidebarContent isCollapsed={!isOpen} />
+        <SidebarContent isCollapsed={!isOpen} data={data} />
       </aside>
 
       {/* Mobile drawer */}
@@ -236,7 +255,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <div className="flex items-center justify-between px-3 py-3 border-b border-border shrink-0">
             <span className="text-xs font-semibold text-muted-foreground px-1">Menu</span>
           </div>
-          <SidebarContent onClose={onMobileClose} isCollapsed={false} />
+          <SidebarContent onClose={onMobileClose} isCollapsed={false} data={data} />
         </SheetContent>
       </Sheet>
     </>

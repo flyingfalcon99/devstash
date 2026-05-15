@@ -43,13 +43,14 @@ async function main() {
   console.log('System item types seeded.');
 
   // Helper to create collection and items
-  const createCollection = async (name: string, description: string, defaultTypeId: string) => {
+  const createCollection = async (name: string, description: string, defaultTypeId: string, isFavorite: boolean = false) => {
     return await prisma.collection.create({
       data: {
         name,
         description,
         userId: user.id,
         defaultTypeId,
+        isFavorite,
       },
     });
   };
@@ -58,7 +59,8 @@ async function main() {
   const reactCollection = await createCollection(
     'React Patterns',
     'Reusable React patterns and hooks',
-    itemTypes['snippet']
+    itemTypes['snippet'],
+    true
   );
 
   await Promise.all([
@@ -204,7 +206,8 @@ async function main() {
   const terminalCollection = await createCollection(
     'Terminal Commands',
     'Useful shell commands for everyday development',
-    itemTypes['command']
+    itemTypes['command'],
+    true
   );
 
   await Promise.all([
