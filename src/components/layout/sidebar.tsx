@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const iconMap = {
   Code,
@@ -82,6 +83,9 @@ function SidebarContent({ onClose, isCollapsed, data }: SidebarContentProps) {
                       <Icon className="h-4 w-4 shrink-0" style={{ color: type.color }} />
                     )}
                     {!isCollapsed && <span className="capitalize">{type.name}s</span>}
+                    {!isCollapsed && (type.name === "File" || type.name === "Image") && (
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-medium">Pro</Badge>
+                    )}
                   </div>
                   {!isCollapsed && <span className="text-xs">{type.count}</span>}
                 </Link>
