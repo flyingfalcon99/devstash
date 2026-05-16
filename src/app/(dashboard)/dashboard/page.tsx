@@ -4,29 +4,15 @@ import { getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
   File,
-  Image,
-  Link as LinkIcon,
   Star,
   Folder,
   Pin,
   Clock
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const iconMap = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-} as const;
+import { itemTypeIconMap } from "@/lib/constants/item-types";
 
 
 
@@ -39,7 +25,7 @@ export default async function DashboardPage() {
 
   const collectionsWithMeta = dbRecentCollections.map(col => {
     const typeCounts: Record<string, { count: number, color: string }> = {};
-    const iconsMap = new Map<string, { Icon: any, color: string, name: string }>();
+    const iconsMap = new Map<string, { Icon: LucideIcon, color: string, name: string }>();
 
     col.items.forEach(ic => {
       const t = ic.item.itemType;
@@ -49,7 +35,7 @@ export default async function DashboardPage() {
         }
         typeCounts[t.name].count++;
         
-        const IconComponent = iconMap[t.icon as keyof typeof iconMap];
+        const IconComponent = itemTypeIconMap[t.icon as keyof typeof itemTypeIconMap];
         if (IconComponent && !iconsMap.has(t.name)) {
           iconsMap.set(t.name, { Icon: IconComponent, color: t.color, name: t.name });
         }
@@ -151,12 +137,12 @@ export default async function DashboardPage() {
                     {col.icons.length > 0 && (
                       <div className="flex items-center gap-1.5 mt-3">
                         {col.icons.map((iconData, idx) => (
-                          <iconData.Icon 
-                            key={idx} 
-                            className="h-3.5 w-3.5" 
-                            style={{ color: iconData.color }} 
-                            title={iconData.name}
-                          />
+                          <span key={idx} title={iconData.name}>
+                            <iconData.Icon
+                              className="h-3.5 w-3.5"
+                              style={{ color: iconData.color }}
+                            />
+                          </span>
                         ))}
                       </div>
                     )}
@@ -175,7 +161,7 @@ export default async function DashboardPage() {
             </div>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {pinnedItems.map((item) => {
-                const Icon = iconMap[item.itemType.icon as keyof typeof iconMap] || File;
+                const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
                 const color = item.itemType.color;
                 
                 return (
@@ -222,7 +208,7 @@ export default async function DashboardPage() {
         </div>
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {recentItems.map((item) => {
-            const Icon = iconMap[item.itemType.icon as keyof typeof iconMap] || File;
+            const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
             const color = item.itemType.color;
             const name = item.itemType.name;
 
