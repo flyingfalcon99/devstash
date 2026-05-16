@@ -30,16 +30,20 @@ async function main() {
     { name: 'link', icon: 'Link', color: '#10b981', isSystem: true },
   ];
 
-  const itemTypes: Record<string, string> = {};
-  for (const type of systemItemTypes) {
-    let existing = await prisma.itemType.findFirst({
-      where: { name: type.name, userId: null },
-    });
-    if (!existing) {
-      existing = await prisma.itemType.create({ data: type });
-    }
-    itemTypes[type.name] = existing.id;
+  const existingTypes = await prisma.itemType.findMany({
+    where: { isSystem: true, userId: null }
+  });
+  const existingNames = new Set(existingTypes.map(t => t.name));
+  const toCreate = systemItemTypes.filter(t => !existingNames.has(t.name));
+  if (toCreate.length > 0) {
+    await prisma.itemType.createMany({ data: toCreate });
   }
+  const allTypes = await prisma.itemType.findMany({
+    where: { isSystem: true, userId: null }
+  });
+  const itemTypes: Record<string, string> = Object.fromEntries(
+    allTypes.map(t => [t.name, t.id])
+  );
   console.log('System item types seeded.');
 
   // Helper to create collection and items

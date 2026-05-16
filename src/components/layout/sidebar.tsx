@@ -3,13 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link as LinkIcon,
   Star,
   Settings,
   PanelLeftClose,
@@ -22,20 +15,11 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-const iconMap = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-} as const;
+import { itemTypeIconMap } from "@/lib/constants/item-types";
 
 export interface SidebarData {
   user: { name: string; email: string };
-  itemTypes: Array<{ id: string; name: string; icon: string; color: string; count: number }>;
+  itemTypes: Array<{ id: string; slug: string; name: string; icon: string; color: string; count: number }>;
   favoriteCollections: Array<{ id: string; name: string }>;
   recentCollections: Array<{ id: string; name: string; itemCount: number; color: string }>;
 }
@@ -66,11 +50,11 @@ function SidebarContent({ onClose, isCollapsed, data }: SidebarContentProps) {
           )}
           <nav className="space-y-0.5">
             {data.itemTypes.map((type) => {
-              const Icon = iconMap[type.icon as keyof typeof iconMap];
+              const Icon = itemTypeIconMap[type.icon as keyof typeof itemTypeIconMap];
               return (
                 <Link
                   key={type.id}
-                  href={`/items/${type.name}s`}
+                  href={`/items/${type.slug}s`}
                   onClick={onClose}
                   className={cn(
                     "flex items-center px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors",
@@ -83,7 +67,7 @@ function SidebarContent({ onClose, isCollapsed, data }: SidebarContentProps) {
                       <Icon className="h-4 w-4 shrink-0" style={{ color: type.color }} />
                     )}
                     {!isCollapsed && <span className="capitalize">{type.name}s</span>}
-                    {!isCollapsed && (type.name === "File" || type.name === "Image") && (
+                    {!isCollapsed && (type.slug === "file" || type.slug === "image") && (
                       <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-medium">Pro</Badge>
                     )}
                   </div>
