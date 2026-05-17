@@ -85,5 +85,11 @@ dev-stash/
 - Always validate that changes don't break existing functionality.
 - Feature specs are the single source of truth for implementation details.
 
-Let me know when you're ready to start working on a feature. I'll update `context/current-feature.md` accordingly.
-```
+
+## 8. Neon Database (MCP)
+
+- **Project**: `devstash` (ID: `solitary-night-68624719`)
+- **Default branch**: `development` (ID: `br-dark-shape-aqa54et1`)
+- **ALWAYS** use the development branch for all Neon MCP queries and operations.
+- **NEVER** read from or write to the `production` branch unless the user explicitly says "use production" or "production data".
+- When running SQL via `mcp__neon__run_sql`, always pass both `projectId` and `branchId` explicitly.
