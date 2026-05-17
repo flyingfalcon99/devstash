@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { DashboardLayoutClient } from "@/components/layout/dashboard-layout-client";
-import { getDemoUser, getSidebarCollections } from "@/lib/db/collections";
+import { getSidebarCollections } from "@/lib/db/collections";
 import { getSidebarItemTypes } from "@/lib/db/items";
 
 export default async function DashboardLayout({
@@ -7,17 +9,24 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getDemoUser();
-  if (!user) return null;
+  const session = await auth();
+  if (!session?.user) redirect("/sign-in");
 
-  const itemTypes = await getSidebarItemTypes(user.id);
-  const { favorites, recents } = await getSidebarCollections(user.id);
+  const { user } = session;
+  const userId = user.id!;
+
+  const itemTypes = await getSidebarItemTypes(userId);
+  const { favorites, recents } = await getSidebarCollections(userId);
 
   const sidebarProps = {
-    user: { name: user.name ?? "", email: user.email },
+    user: {
+      name: user.name ?? "",
+      email: user.email ?? "",
+      image: user.image ?? null,
+    },
     itemTypes,
     favoriteCollections: favorites,
-    recentCollections: recents
+    recentCollections: recents,
   };
 
   return <DashboardLayoutClient sidebarProps={sidebarProps}>{children}</DashboardLayoutClient>;
