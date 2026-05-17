@@ -1,26 +1,16 @@
-# Current Feature: Auth UI - Sign In, Register & Sign Out
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Build `/sign-in` page: email/password fields, "Sign in with GitHub" button, link to register, error display
-- Build `/register` page: name/email/password/confirmPassword fields, validation, POST to `/api/auth/register`, redirect to sign-in on success
-- Update `auth.ts` to point custom `pages.signIn` to `/sign-in`
-- Update sidebar bottom: user avatar (GitHub image or initials fallback), user name, dropdown with "Sign out" and profile link
+<!-- Goals & requirements -->
 
 ## Notes
 
-**Avatar logic:**
-- `user.image` set → show GitHub avatar
-- No image → generate initials from name (e.g. "Brad Traversy" → "BT")
-- Create a reusable `UserAvatar` component covering both cases
-
-**Sidebar dropdown:** clicking avatar opens popover/dropdown with "Sign out" action and link to `/profile`
-
-**Sign-in redirect:** update `auth.ts` with `pages: { signIn: '/sign-in' }` so proxy redirects go to custom page instead of `/api/auth/signin`
+<!-- Any extra notes -->
 
 ## History
 
@@ -40,3 +30,4 @@ In Progress
 - Codebase Audit Fixes
 - Auth Setup - NextAuth v5 + GitHub OAuth (split config, Prisma adapter, proxy route protection)
 - Auth Credentials - Email/Password provider with bcrypt, registration API route
+- Auth UI - Custom sign-in/register pages, sidebar user avatar + sign-out dropdown, sonner toasts
