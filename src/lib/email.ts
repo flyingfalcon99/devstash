@@ -3,7 +3,9 @@ import { Resend } from "resend"
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function sendVerificationEmail(email: string, token: string) {
-  const baseUrl = process.env.AUTH_URL ?? "http://localhost:3000"
+  const baseUrl =
+    process.env.AUTH_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
   const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
   const { error } = await resend.emails.send({
