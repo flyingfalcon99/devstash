@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -9,12 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+function SearchParamsHandler() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -35,6 +30,16 @@ export default function SignInPage() {
       });
     }
   }, [searchParams]);
+
+  return null;
+}
+
+export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleCredentials(e: React.FormEvent) {
     e.preventDefault();
@@ -59,6 +64,10 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Suspense>
+        <SearchParamsHandler />
+      </Suspense>
+
       <div className="w-full max-w-sm space-y-6">
         <div className="flex flex-col items-center gap-2">
           <Package className="h-8 w-8 text-primary" />
