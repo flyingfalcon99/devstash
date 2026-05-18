@@ -1,25 +1,16 @@
-# Current Feature: Profile Page
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Create `/profile` route — protected, server-fetched user data + stats
-- Display user info: name, email, avatar (GitHub image or initials), account creation date
-- Show usage stats: total items, total collections, breakdown by item type (snippets, prompts, notes, commands, links, files, images)
-- Change password section — visible only for credentials users (those with `password` field set, i.e. not GitHub-only OAuth)
-- Delete account with confirmation dialog — cascades all user data
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Avatar logic same as sidebar: `user.image` → GitHub photo, else initials from name/email
-- Change password: reuse `POST /api/auth/reset-password` pattern (hash + update), no token needed since user is already authenticated — create a separate `POST /api/profile/change-password` route
-- Delete account: `DELETE /api/profile` — deletes user record, cascades all data, then signs out and redirects to `/sign-in`
-- Confirmation dialog for delete: no ShadCN dialog installed yet — use a simple inline confirmation state
-- Fetch stats server-side using existing `getDashboardStats` and a new query for item type breakdown
-- Route protection via `auth()` in the page (same pattern as dashboard layout)
+<!-- Any extra notes -->
 
 ## History
 
@@ -43,3 +34,4 @@ In Progress
 - Email Verification - Resend email on register, verify-email endpoint, block unverified credentials sign-in
 - Email Verification Feature Flag - REQUIRE_EMAIL_VERIFICATION env var, centralised in feature-flags.ts
 - Forgot Password - reset token (1h, reset: prefix), /forgot-password and /reset-password pages, Resend email
+- Profile Page - user info, usage stats, change password (credentials only), delete account with confirmation
