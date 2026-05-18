@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { getDemoUser, getDashboardStats, getRecentCollections } from "@/lib/db/collections";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { getDashboardStats, getRecentCollections } from "@/lib/db/collections";
 import { getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,17 +13,15 @@ import {
   Clock
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 
-
-
 export default async function DashboardPage() {
-  const user = await getDemoUser();
-  if (!user) return <div>User not found</div>;
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const userId = session.user.id;
 
-  const stats = await getDashboardStats(user.id);
-  const dbRecentCollections = await getRecentCollections(user.id, 6);
+  const stats = await getDashboardStats(userId);
+  const dbRecentCollections = await getRecentCollections(userId, 6);
 
   const collectionsWithMeta = dbRecentCollections.map(col => {
     const typeCounts: Record<string, { count: number, color: string }> = {};
@@ -55,8 +55,8 @@ export default async function DashboardPage() {
     };
   });
 
-  const pinnedItems = await getPinnedItems(user.id);
-  const recentItems = await getRecentItems(user.id, 10);
+  const pinnedItems = await getPinnedItems(userId);
+  const recentItems = await getRecentItems(userId, 10);
 
   return (
     <div className="space-y-6">
