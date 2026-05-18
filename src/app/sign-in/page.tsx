@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Package } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,6 +15,26 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const verified = searchParams.get("verified");
+    const errorParam = searchParams.get("error");
+
+    if (verified === "true") {
+      toast.success("Email verified!", {
+        description: "Your email has been verified. You can now sign in.",
+      });
+    } else if (errorParam === "token-expired") {
+      toast.error("Link expired", {
+        description: "Your verification link has expired. Please register again.",
+      });
+    } else if (errorParam === "invalid-token") {
+      toast.error("Invalid link", {
+        description: "This verification link is invalid or already used.",
+      });
+    }
+  }, [searchParams]);
 
   async function handleCredentials(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +47,9 @@ export default function SignInPage() {
       redirect: false,
     });
 
-    if (res?.error) {
+    if (res?.code === "email_not_verified") {
+      setError("Please verify your email before signing in. Check your inbox.");
+    } else if (res?.error) {
       setError("Invalid email or password.");
     } else {
       router.push("/dashboard");

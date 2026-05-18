@@ -1,16 +1,25 @@
-# Current Feature
+# Current Feature: Email Verification on Register
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Install `resend` package
+- On registration, generate a verification token, store it in `VerificationToken` table, and send a verification email via Resend
+- Create `GET /api/auth/verify-email?token=xxx` endpoint — validates token, sets `user.emailVerified`, deletes token, redirects to sign-in
+- Block unverified users from signing in via Credentials (return error "Please verify your email first")
+- Update register success toast/message to say "Check your email to verify your account"
 
 ## Notes
 
-<!-- Any extra notes -->
+- **Resend**: `RESEND_API_KEY` already in `.env`. From address: `onboarding@resend.dev`
+- **VerificationToken model** already in Prisma schema (`identifier`, `token`, `expires`, `@@unique([identifier, token])`)
+- **User.emailVerified** field already on User model (`DateTime?`)
+- Token should expire after 24 hours
+- GitHub OAuth users skip email verification (no `emailVerified` check for OAuth flow)
+- Use `crypto.randomUUID()` for token generation — no extra deps needed
 
 ## History
 
