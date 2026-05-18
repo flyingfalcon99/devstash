@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature: Forgot Password
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Add "Forgot password?" link to `/sign-in` page
+- Build `/forgot-password` page — email input, submits to `POST /api/auth/forgot-password`
+- `POST /api/auth/forgot-password` — generates reset token (stored in `VerificationToken` with `identifier = "reset:{email}"`), sends reset email via Resend. Always returns the same success message (don't reveal if email exists)
+- Build `/reset-password?token=xxx` page — new password + confirm password fields, submits to `POST /api/auth/reset-password`
+- `POST /api/auth/reset-password` — validates token, hashes new password, updates user, deletes token, returns success
 
 ## Notes
 
-<!-- Any extra notes -->
+- **Token prefix**: use `identifier = "reset:{email}"` to distinguish reset tokens from email verification tokens (which use `identifier = "{email}"`)
+- **Token TTL**: 1 hour (shorter than email verification's 24h)
+- **Security**: never reveal whether an email is registered — always respond with "If an account exists, a reset link has been sent"
+- **Scope**: only applies to credentials users (those with a `password` field). GitHub OAuth users have no password to reset — no need to handle that case explicitly
+- **Resend**: reuse `sendVerificationEmail` pattern from `src/lib/email.ts`, add a `sendPasswordResetEmail` helper alongside it
 
 ## History
 

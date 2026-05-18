@@ -110,6 +110,12 @@ export default function SignInPage() {
             />
           </div>
 
+          <div className="flex justify-end">
+            <Link href="/forgot-password" className="text-xs text-muted-foreground underline-offset-4 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+
           {error && (
             <p className="text-sm text-destructive">{error}</p>
           )}
