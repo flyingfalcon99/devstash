@@ -1,16 +1,21 @@
-# Current Feature
+# Current Feature: Email Verification Feature Flag
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Create `src/lib/feature-flags.ts` — single place to read `REQUIRE_EMAIL_VERIFICATION` env var (default `false`)
+- Update register route — when flag is off, skip token + email, auto-set `emailVerified: new Date()`
+- Update `auth.ts` Credentials — when flag is off, skip `emailVerified` check
+- Add `REQUIRE_EMAIL_VERIFICATION=false` to `.env.local`
 
 ## Notes
 
-<!-- Any extra notes -->
+- Env var: `REQUIRE_EMAIL_VERIFICATION=true` enables verification, anything else (or unset) disables it
+- Centralised in `feature-flags.ts` so toggling is one-line, not scattered across files
+- When disabled, newly registered users are immediately verified and can sign in straight away
 
 ## History
 

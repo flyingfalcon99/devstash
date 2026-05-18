@@ -38,11 +38,18 @@ export default function RegisterPage() {
     if (!res.ok) {
       setError(data.error ?? "Registration failed.");
     } else {
-      toast.success("Check your email!", {
-        description: "We sent a verification link to " + form.email + ". Click it to activate your account.",
-        duration: 5000,
-      });
-      setTimeout(() => router.push("/sign-in"), 2500);
+      if (data.emailVerificationRequired) {
+        toast.success("Check your email!", {
+          description: "We sent a verification link to " + form.email + ". Click it to activate your account.",
+          duration: 5000,
+        });
+        setTimeout(() => router.push("/sign-in"), 2500);
+      } else {
+        toast.success("Account created!", {
+          description: "You can now sign in.",
+        });
+        setTimeout(() => router.push("/sign-in"), 1500);
+      }
     }
     setLoading(false);
   }

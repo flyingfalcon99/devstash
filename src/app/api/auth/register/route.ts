@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 import { sendVerificationEmail } from "@/lib/email"
+import { emailVerificationEnabled } from "@/lib/feature-flags"
 
 export async function POST(req: NextRequest) {
   const { name, email, password, confirmPassword } = await req.json()
@@ -22,17 +23,25 @@ export async function POST(req: NextRequest) {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   await prisma.user.create({
-    data: { name, email, password: hashedPassword },
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+      emailVerified: emailVerificationEnabled ? null : new Date(),
+    },
   })
 
-  const token = crypto.randomUUID()
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  if (emailVerificationEnabled) {
+    const token = crypto.randomUUID()
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    await prisma.verificationToken.create({
+      data: { identifier: email, token, expires },
+    })
+    await sendVerificationEmail(email, token)
+  }
 
-  await prisma.verificationToken.create({
-    data: { identifier: email, token, expires },
-  })
-
-  await sendVerificationEmail(email, token)
-
-  return NextResponse.json({ success: true }, { status: 201 })
+  return NextResponse.json(
+    { success: true, emailVerificationRequired: emailVerificationEnabled },
+    { status: 201 }
+  )
 }
