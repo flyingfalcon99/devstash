@@ -1,21 +1,16 @@
-# Current Feature: Email Verification Feature Flag
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Create `src/lib/feature-flags.ts` — single place to read `REQUIRE_EMAIL_VERIFICATION` env var (default `false`)
-- Update register route — when flag is off, skip token + email, auto-set `emailVerified: new Date()`
-- Update `auth.ts` Credentials — when flag is off, skip `emailVerified` check
-- Add `REQUIRE_EMAIL_VERIFICATION=false` to `.env.local`
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Env var: `REQUIRE_EMAIL_VERIFICATION=true` enables verification, anything else (or unset) disables it
-- Centralised in `feature-flags.ts` so toggling is one-line, not scattered across files
-- When disabled, newly registered users are immediately verified and can sign in straight away
+<!-- Any extra notes -->
 
 ## History
 
@@ -37,3 +32,4 @@ In Progress
 - Auth Credentials - Email/Password provider with bcrypt, registration API route
 - Auth UI - Custom sign-in/register pages, sidebar user avatar + sign-out dropdown, sonner toasts
 - Email Verification - Resend email on register, verify-email endpoint, block unverified credentials sign-in
+- Email Verification Feature Flag - REQUIRE_EMAIL_VERIFICATION env var, centralised in feature-flags.ts
