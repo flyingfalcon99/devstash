@@ -25,6 +25,28 @@ export async function getRecentItems(userId: string, limit = 10) {
   }
 }
 
+export async function getItemTypeBySlug(slug: string) {
+  try {
+    return await prisma.itemType.findFirst({
+      where: { name: slug, isSystem: true }
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch item type: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+export async function getItemsByType(userId: string, typeSlug: string) {
+  try {
+    return await prisma.item.findMany({
+      where: { userId, itemType: { name: typeSlug } },
+      orderBy: { createdAt: 'desc' },
+      include: { itemType: true }
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch items by type: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getSidebarItemTypes(userId: string) {
   try {
     const types = await prisma.itemType.findMany({
