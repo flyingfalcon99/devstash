@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Search, Plus, Menu, Package, FolderPlus } from "lucide-react";
+import { Search, Menu, Package, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NewItemButton } from "@/components/features/items/new-item-button";
 
 export function TopBar({ onOpenMobile }: { onOpenMobile?: () => void }) {
   return (
@@ -33,10 +34,7 @@ export function TopBar({ onOpenMobile }: { onOpenMobile?: () => void }) {
           <FolderPlus className="h-4 w-4" />
           New Collection
         </Button>
-        <Button size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Item
-        </Button>
+        <NewItemButton />
       </div>
     </header>
   );

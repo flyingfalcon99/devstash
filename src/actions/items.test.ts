@@ -4,15 +4,17 @@ vi.mock("@/auth", () => ({ auth: vi.fn() }));
 vi.mock("@/lib/db/items", () => ({
   updateItemById: vi.fn(),
   deleteItemById: vi.fn(),
+  createItemInDb: vi.fn(),
 }));
 
-import { deleteItem, updateItem } from "./items";
+import { deleteItem, updateItem, createItem } from "./items";
 import { auth } from "@/auth";
-import { deleteItemById, updateItemById } from "@/lib/db/items";
+import { deleteItemById, updateItemById, createItemInDb } from "@/lib/db/items";
 
 const mockAuth = vi.mocked(auth);
 const mockDelete = vi.mocked(deleteItemById);
 const mockUpdate = vi.mocked(updateItemById);
+const mockCreate = vi.mocked(createItemInDb);
 
 beforeEach(() => vi.clearAllMocks());
 
@@ -114,5 +116,85 @@ describe("updateItem", () => {
     await updateItem("item-1", validPayload);
 
     expect(mockUpdate).toHaveBeenCalledWith("item-1", "user-99", expect.any(Object));
+  });
+});
+
+// ─── createItem ───────────────────────────────────────────────────────────────
+
+const baseCreate = {
+  type: "snippet" as const,
+  title: "My Snippet",
+  description: null,
+  content: null,
+  url: null,
+  language: null,
+  tags: [],
+};
+
+describe("createItem", () => {
+  it("returns error when not authenticated", async () => {
+    mockAuth.mockResolvedValue(null as never);
+
+    const result = await createItem(baseCreate);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Unauthorized");
+  });
+
+  it("returns validation error when title is empty", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+
+    const result = await createItem({ ...baseCreate, title: "  " });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Title is required");
+  });
+
+  it("requires URL when type is link", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+
+    const result = await createItem({ ...baseCreate, type: "link", url: null });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/URL is required/i);
+  });
+
+  it("rejects an invalid URL for link type", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+
+    const result = await createItem({ ...baseCreate, type: "link", url: "not-a-url" });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/valid URL/i);
+  });
+
+  it("allows non-link types without a URL", async () => {
+    const item = { id: "item-1", title: "My Snippet", tags: [], collections: [] };
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockCreate.mockResolvedValue(item as never);
+
+    const result = await createItem({ ...baseCreate, type: "note", url: null });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("returns created item on success", async () => {
+    const item = { id: "new-1", title: "My Snippet", tags: [], collections: [] };
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockCreate.mockResolvedValue(item as never);
+
+    const result = await createItem(baseCreate);
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.id).toBe("new-1");
+  });
+
+  it("scopes the create to the authenticated user", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-77" } } as never);
+    mockCreate.mockResolvedValue({ id: "new-1" } as never);
+
+    await createItem(baseCreate);
+
+    expect(mockCreate).toHaveBeenCalledWith("user-77", expect.any(Object));
   });
 });
