@@ -1,31 +1,16 @@
-# Current Feature: Item Create
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- "New Item" button in top bar opens a ShadCN Dialog modal
-- Type selector inside the modal: snippet, prompt, command, note, link
-- Fields shown based on selected type:
-  - All types: title (required), description, tags
-  - snippet / command: content + language
-  - prompt / note: content only
-  - link: URL (required, replaces content)
-- `createItem` server action in `src/actions/items.ts` with Zod validation
-- `createItemInDb` query function in `src/lib/db/items.ts`
-- On success: close modal, success toast, `router.refresh()`
-- On error: error toast, modal stays open
+<!-- Goals & requirements -->
 
 ## Notes
 
-- ShadCN Dialog component needs to be added (`npx shadcn add dialog`)
-- "New Item" button in top-bar is currently UI-only — needs to open the modal
-- Top bar is a server component; the New Item button needs `"use client"` or a client wrapper
-- Tags: comma-separated input, same pattern as the edit drawer
-- Link type: URL is required (Zod `z.string().url()`); no content/language fields
-- Return the created item from the server action so the client can close without a separate fetch
+<!-- Any extra notes -->
 
 ## History
 
@@ -58,3 +43,4 @@ In Progress
 - Item Drawer Edit Mode - inline edit mode in drawer; updateItem server action with Zod validation; type-specific fields; tag replace; router.refresh() + re-fetch on save; toast on success/error
 - Item Delete - AlertDialog confirmation on trash button; deleteItem server action; close drawer + toast + router.refresh() on success
 - Logo Link - DevStash logo/name in top bar links to /dashboard
+- Item Create - Dialog modal from top bar; type selector; type-specific fields; createItem server action with Zod + conditional URL validation; 25 tests passing
