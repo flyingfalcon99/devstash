@@ -118,7 +118,7 @@ export default async function DashboardPage() {
               <Link key={col.id} href={`/collections/${col.id}`}>
                 <Card 
                   className="hover:bg-muted/50 transition-colors shadow-sm h-full"
-                  style={{ borderTopColor: col.borderColor || undefined, borderTopWidth: col.borderColor ? '3px' : '1px' }}
+                  style={{ borderLeftColor: col.borderColor || undefined, borderLeftWidth: col.borderColor ? '3px' : '1px' }}
                 >
                   <CardHeader className="p-4">
                     <div className="flex items-center justify-between">
