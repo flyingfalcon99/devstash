@@ -10,7 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
-import { updateItem, type UpdateItemInput } from "@/actions/items";
+import { updateItem, deleteItem, type UpdateItemInput } from "@/actions/items";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ItemDetail {
   id: string;
@@ -69,7 +79,7 @@ export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
             onCancel={() => setMode("view")}
           />
         ) : (
-          <DrawerBody item={item} onEdit={() => setMode("edit")} />
+          <DrawerBody item={item} onEdit={() => setMode("edit")} onClose={onClose} />
         )}
       </SheetContent>
     </Sheet>
@@ -108,9 +118,26 @@ function DrawerSkeleton() {
 
 // ─── View mode ───────────────────────────────────────────────────────────────
 
-function DrawerBody({ item, onEdit }: { item: ItemDetail; onEdit: () => void }) {
+function DrawerBody({ item, onEdit, onClose }: { item: ItemDetail; onEdit: () => void; onClose: () => void }) {
+  const router = useRouter();
   const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
   const color = item.itemType.color;
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    const result = await deleteItem(item.id);
+    if (result.success) {
+      toast.success("Item deleted");
+      router.refresh();
+      onClose();
+    } else {
+      toast.error(result.error ?? "Failed to delete item");
+      setDeleting(false);
+    }
+    setDeleteOpen(false);
+  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -153,10 +180,32 @@ function DrawerBody({ item, onEdit }: { item: ItemDetail; onEdit: () => void }) 
           Edit
         </Button>
         <div className="flex-1" />
-        <Button variant="ghost" size="icon-sm" className="h-7 w-7 text-muted-foreground hover:text-destructive">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="h-7 w-7 text-muted-foreground hover:text-destructive"
+          onClick={() => setDeleteOpen(true)}
+        >
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete item?</AlertDialogTitle>
+            <AlertDialogDescription>
+              &ldquo;{item.title}&rdquo; will be permanently deleted. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 text-sm">
         {item.description && (

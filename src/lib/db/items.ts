@@ -89,6 +89,16 @@ export async function updateItemById(
   }
 }
 
+export async function deleteItemById(id: string, userId: string) {
+  try {
+    const existing = await prisma.item.findFirst({ where: { id, userId } });
+    if (!existing) return null;
+    return await prisma.item.delete({ where: { id } });
+  } catch (err) {
+    throw new Error(`Failed to delete item: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getItemTypeBySlug(slug: string) {
   try {
     return await prisma.itemType.findFirst({
