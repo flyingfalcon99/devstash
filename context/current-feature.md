@@ -1,18 +1,16 @@
-# Current Feature: Item List View 3-Column Layout
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Update `/items/[type]` grid to show 3 columns on large viewports
-- Keep 1-column layout on mobile and 2-column on medium screens
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Change `grid-cols-1 md:grid-cols-2` to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` in the page
-- No changes needed to ItemCard itself
+<!-- Any extra notes -->
 
 ## History
 
@@ -39,3 +37,5 @@ In Progress
 - Profile Page - user info, usage stats, change password (credentials only), delete account with confirmation
 - Rate Limiting for Auth - sliding-window via Upstash Redis on register, forgot-password, reset-password, and login; 429 + Retry-After header; toast notifications; fail-open on infra errors
 - Items List View - dynamic /items/[type] route, two-column ItemCard grid with left border colored by type, 404 for unknown types
+- Vitest Setup - unit testing for server actions and utilities; node environment; npm test / test:watch scripts
+- Item List View 3-Column Layout - responsive grid updated to 1-col mobile, 2-col md, 3-col lg+
