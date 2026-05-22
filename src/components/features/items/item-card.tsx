@@ -1,31 +1,39 @@
-import Link from "next/link";
+"use client";
+
 import { File, Star, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 
-interface ItemCardProps {
-  item: {
-    id: string;
-    title: string;
-    description: string | null;
-    isFavorite: boolean;
-    language: string | null;
-    createdAt: Date;
-    itemType: {
-      name: string;
-      icon: string;
-      color: string;
-    };
+export interface ItemCardItem {
+  id: string;
+  title: string;
+  description: string | null;
+  isFavorite: boolean;
+  language: string | null;
+  createdAt: Date;
+  itemType: {
+    name: string;
+    icon: string;
+    color: string;
   };
 }
 
-export function ItemCard({ item }: ItemCardProps) {
+interface ItemCardProps {
+  item: ItemCardItem;
+  onOpen?: (id: string) => void;
+}
+
+export function ItemCard({ item, onOpen }: ItemCardProps) {
   const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
   const color = item.itemType.color;
 
   return (
-    <Link href={`/items/${item.id}`}>
+    <button
+      type="button"
+      onClick={() => onOpen?.(item.id)}
+      className="w-full text-left block"
+    >
       <Card
         className="hover:bg-muted/50 transition-colors shadow-sm h-full flex flex-col"
         style={{ borderLeftColor: color, borderLeftWidth: "3px" }}
@@ -66,6 +74,6 @@ export function ItemCard({ item }: ItemCardProps) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </button>
   );
 }

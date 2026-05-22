@@ -25,6 +25,25 @@ export async function getRecentItems(userId: string, limit = 10) {
   }
 }
 
+export async function getItemById(id: string, userId: string) {
+  try {
+    return await prisma.item.findFirst({
+      where: { id, userId },
+      include: {
+        itemType: true,
+        tags: true,
+        collections: {
+          include: {
+            collection: { select: { id: true, name: true } }
+          }
+        }
+      }
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch item: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getItemTypeBySlug(slug: string) {
   try {
     return await prisma.itemType.findFirst({
