@@ -1,16 +1,18 @@
-# Current Feature
+# Current Feature: Item List View 3-Column Layout
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals & requirements -->
+- Update `/items/[type]` grid to show 3 columns on large viewports
+- Keep 1-column layout on mobile and 2-column on medium screens
 
 ## Notes
 
-<!-- Any extra notes -->
+- Change `grid-cols-1 md:grid-cols-2` to `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` in the page
+- No changes needed to ItemCard itself
 
 ## History
 
