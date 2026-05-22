@@ -89,6 +89,52 @@ export async function updateItemById(
   }
 }
 
+export async function createItemInDb(
+  userId: string,
+  data: {
+    type: string;
+    title: string;
+    description?: string | null;
+    content?: string | null;
+    url?: string | null;
+    language?: string | null;
+    tags: string[];
+  }
+) {
+  const itemType = await prisma.itemType.findFirst({
+    where: { name: data.type, isSystem: true },
+  });
+  if (!itemType) throw new Error(`Unknown item type: ${data.type}`);
+
+  const contentType = data.url ? "URL" : "TEXT";
+
+  return await prisma.item.create({
+    data: {
+      title: data.title,
+      description: data.description ?? null,
+      content: data.content ?? null,
+      url: data.url ?? null,
+      language: data.language ?? null,
+      contentType,
+      userId,
+      itemTypeId: itemType.id,
+      tags: {
+        connectOrCreate: data.tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      itemType: true,
+      tags: true,
+      collections: {
+        include: { collection: { select: { id: true, name: true } } },
+      },
+    },
+  });
+}
+
 export async function deleteItemById(id: string, userId: string) {
   try {
     const existing = await prisma.item.findFirst({ where: { id, userId } });
