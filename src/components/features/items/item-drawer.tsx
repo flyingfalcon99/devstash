@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Star, Pin, Copy, Pencil, Trash2, File } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Star, Pin, Copy, Pencil, Trash2, File, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
+import { updateItem, type UpdateItemInput } from "@/actions/items";
 
 interface ItemDetail {
   id: string;
@@ -32,31 +36,47 @@ interface ItemDrawerProps {
 export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
   const [item, setItem] = useState<ItemDetail | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"view" | "edit">("view");
+
+  async function fetchItem(id: string) {
+    setLoading(true);
+    const res = await fetch(`/api/items/${id}`);
+    const data = res.ok ? await res.json() : null;
+    if (data) setItem(data);
+    setLoading(false);
+  }
 
   useEffect(() => {
     if (!itemId) return;
-    setLoading(true);
-    fetch(`/api/items/${itemId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data) setItem(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    setMode("view");
+    fetchItem(itemId);
   }, [itemId]);
+
+  function handleSaveSuccess() {
+    setMode("view");
+    if (itemId) fetchItem(itemId);
+  }
 
   return (
     <Sheet open={itemId !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
       <SheetContent side="right" className="p-0 gap-0 overflow-hidden flex flex-col sm:max-w-[480px]">
         {loading || !item ? (
           <DrawerSkeleton />
+        ) : mode === "edit" ? (
+          <DrawerEditBody
+            item={item}
+            onSaveSuccess={handleSaveSuccess}
+            onCancel={() => setMode("view")}
+          />
         ) : (
-          <DrawerBody item={item} />
+          <DrawerBody item={item} onEdit={() => setMode("edit")} />
         )}
       </SheetContent>
     </Sheet>
   );
 }
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
 
 function DrawerSkeleton() {
   return (
@@ -86,13 +106,14 @@ function DrawerSkeleton() {
   );
 }
 
-function DrawerBody({ item }: { item: ItemDetail }) {
+// ─── View mode ───────────────────────────────────────────────────────────────
+
+function DrawerBody({ item, onEdit }: { item: ItemDetail; onEdit: () => void }) {
   const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
   const color = item.itemType.color;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
       <div className="px-5 pt-10 pb-3 pr-12">
         <div className="flex items-center gap-2 mb-2">
           <Icon className="h-4 w-4 shrink-0" style={{ color }} />
@@ -110,7 +131,6 @@ function DrawerBody({ item }: { item: ItemDetail }) {
         </div>
       </div>
 
-      {/* Action bar */}
       <div className="flex items-center gap-0.5 px-3 py-2 border-y border-border">
         <Button
           variant="ghost"
@@ -128,21 +148,16 @@ function DrawerBody({ item }: { item: ItemDetail }) {
           <Copy className="h-3.5 w-3.5" />
           Copy
         </Button>
-        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5">
+        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5" onClick={onEdit}>
           <Pencil className="h-3.5 w-3.5" />
           Edit
         </Button>
         <div className="flex-1" />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="h-7 w-7 text-muted-foreground hover:text-destructive"
-        >
+        <Button variant="ghost" size="icon-sm" className="h-7 w-7 text-muted-foreground hover:text-destructive">
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
 
-      {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 text-sm">
         {item.description && (
           <section className="space-y-1.5">
@@ -150,7 +165,6 @@ function DrawerBody({ item }: { item: ItemDetail }) {
             <p>{item.description}</p>
           </section>
         )}
-
         {item.content && (
           <section className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Content</p>
@@ -159,21 +173,14 @@ function DrawerBody({ item }: { item: ItemDetail }) {
             </pre>
           </section>
         )}
-
         {item.url && (
           <section className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">URL</p>
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline break-all text-xs"
-            >
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-xs">
               {item.url}
             </a>
           </section>
         )}
-
         {item.tags.length > 0 && (
           <section className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Tags</p>
@@ -186,7 +193,6 @@ function DrawerBody({ item }: { item: ItemDetail }) {
             </div>
           </section>
         )}
-
         {item.collections.length > 0 && (
           <section className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Collections</p>
@@ -199,32 +205,219 @@ function DrawerBody({ item }: { item: ItemDetail }) {
             </div>
           </section>
         )}
-
         <section className="space-y-1.5">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Details</p>
           <div className="space-y-1 text-xs text-muted-foreground">
             <div className="flex items-center justify-between">
               <span>Created</span>
-              <span>
-                {new Date(item.createdAt).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
+              <span>{new Date(item.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>Updated</span>
-              <span>
-                {new Date(item.updatedAt).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
+              <span>{new Date(item.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</span>
             </div>
           </div>
         </section>
+      </div>
+    </div>
+  );
+}
+
+// ─── Edit mode ────────────────────────────────────────────────────────────────
+
+const CONTENT_TYPES = ["snippet", "prompt", "command", "note"];
+const LANGUAGE_TYPES = ["snippet", "command"];
+const URL_TYPES = ["link"];
+
+const fieldLabel = "text-xs font-medium text-muted-foreground uppercase tracking-wider";
+const textareaClass =
+  "w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none resize-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 dark:bg-input/30";
+
+function DrawerEditBody({
+  item,
+  onSaveSuccess,
+  onCancel,
+}: {
+  item: ItemDetail;
+  onSaveSuccess: () => void;
+  onCancel: () => void;
+}) {
+  const router = useRouter();
+  const [form, setForm] = useState({
+    title: item.title,
+    description: item.description ?? "",
+    content: item.content ?? "",
+    url: item.url ?? "",
+    language: item.language ?? "",
+    tags: item.tags.map((t) => t.name).join(", "),
+  });
+  const [saving, setSaving] = useState(false);
+
+  const typeName = item.itemType.name;
+  const showContent = CONTENT_TYPES.includes(typeName);
+  const showLanguage = LANGUAGE_TYPES.includes(typeName);
+  const showUrl = URL_TYPES.includes(typeName);
+
+  function set(field: keyof typeof form, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    const tags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+    const payload: UpdateItemInput = {
+      title: form.title,
+      description: form.description || null,
+      content: form.content || null,
+      url: form.url || null,
+      language: form.language || null,
+      tags,
+    };
+
+    const result = await updateItem(item.id, payload);
+    if (result.success) {
+      toast.success("Changes saved");
+      router.refresh();
+      onSaveSuccess();
+    } else {
+      toast.error(result.error ?? "Failed to save changes");
+    }
+    setSaving(false);
+  }
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header — type info stays non-editable */}
+      <div className="px-5 pt-10 pb-3 pr-12">
+        <SheetTitle className="sr-only">Edit {item.title}</SheetTitle>
+        <div className="flex items-center gap-1.5">
+          <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-normal capitalize">
+            {item.itemType.name}
+          </Badge>
+        </div>
+      </div>
+
+      {/* Edit action bar */}
+      <div className="flex items-center gap-2 px-4 py-2 border-y border-border">
+        <Button
+          size="sm"
+          className="h-7 px-3 text-xs gap-1.5"
+          onClick={handleSave}
+          disabled={saving || !form.title.trim()}
+        >
+          <Check className="h-3.5 w-3.5" />
+          {saving ? "Saving…" : "Save"}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 px-3 text-xs gap-1.5"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          <X className="h-3.5 w-3.5" />
+          Cancel
+        </Button>
+      </div>
+
+      {/* Scrollable form */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+        {/* Title */}
+        <div className="space-y-1.5">
+          <label className={fieldLabel}>Title</label>
+          <Input
+            value={form.title}
+            onChange={(e) => set("title", e.target.value)}
+            placeholder="Item title"
+          />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-1.5">
+          <label className={fieldLabel}>Description</label>
+          <textarea
+            value={form.description}
+            onChange={(e) => set("description", e.target.value)}
+            placeholder="Short description"
+            rows={2}
+            className={textareaClass}
+          />
+        </div>
+
+        {/* Content (snippet / prompt / command / note) */}
+        {showContent && (
+          <div className="space-y-1.5">
+            <label className={fieldLabel}>Content</label>
+            <textarea
+              value={form.content}
+              onChange={(e) => set("content", e.target.value)}
+              placeholder="Paste your content here"
+              rows={8}
+              className={cn(textareaClass, "font-mono text-xs")}
+            />
+          </div>
+        )}
+
+        {/* Language (snippet / command) */}
+        {showLanguage && (
+          <div className="space-y-1.5">
+            <label className={fieldLabel}>Language</label>
+            <Input
+              value={form.language}
+              onChange={(e) => set("language", e.target.value)}
+              placeholder="e.g. TypeScript"
+            />
+          </div>
+        )}
+
+        {/* URL (link) */}
+        {showUrl && (
+          <div className="space-y-1.5">
+            <label className={fieldLabel}>URL</label>
+            <Input
+              value={form.url}
+              onChange={(e) => set("url", e.target.value)}
+              placeholder="https://"
+              type="url"
+            />
+          </div>
+        )}
+
+        {/* Tags */}
+        <div className="space-y-1.5">
+          <label className={fieldLabel}>Tags</label>
+          <Input
+            value={form.tags}
+            onChange={(e) => set("tags", e.target.value)}
+            placeholder="react, auth, hooks"
+          />
+          <p className="text-xs text-muted-foreground">Comma-separated</p>
+        </div>
+
+        {/* Non-editable: collections & dates */}
+        {item.collections.length > 0 && (
+          <div className="space-y-1.5">
+            <p className={fieldLabel}>Collections</p>
+            <div className="flex flex-wrap gap-1.5">
+              {item.collections.map(({ collection }) => (
+                <Badge key={collection.id} variant="outline" className="text-[10px] px-1.5 py-0 font-normal">
+                  {collection.name}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-1 text-xs text-muted-foreground pt-1 border-t border-border">
+          <div className="flex items-center justify-between pt-2">
+            <span>Created</span>
+            <span>{new Date(item.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span>Updated</span>
+            <span>{new Date(item.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

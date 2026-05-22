@@ -44,6 +44,51 @@ export async function getItemById(id: string, userId: string) {
   }
 }
 
+export async function updateItemById(
+  id: string,
+  userId: string,
+  data: {
+    title: string;
+    description?: string | null;
+    content?: string | null;
+    url?: string | null;
+    language?: string | null;
+    tags: string[];
+  }
+) {
+  try {
+    const existing = await prisma.item.findFirst({ where: { id, userId } });
+    if (!existing) return null;
+
+    return await prisma.item.update({
+      where: { id },
+      data: {
+        title: data.title,
+        description: data.description ?? null,
+        content: data.content ?? null,
+        url: data.url ?? null,
+        language: data.language ?? null,
+        tags: {
+          set: [],
+          connectOrCreate: data.tags.map((name) => ({
+            where: { name },
+            create: { name },
+          })),
+        },
+      },
+      include: {
+        itemType: true,
+        tags: true,
+        collections: {
+          include: { collection: { select: { id: true, name: true } } },
+        },
+      },
+    });
+  } catch (err) {
+    throw new Error(`Failed to update item: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getItemTypeBySlug(slug: string) {
   try {
     return await prisma.itemType.findFirst({
