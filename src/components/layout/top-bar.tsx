@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Search, Plus, Menu, Package, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +12,10 @@ export function TopBar({ onOpenMobile }: { onOpenMobile?: () => void }) {
             <Menu className="h-5 w-5" />
           </Button>
         )}
-        <div className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Package className="h-5 w-5 text-primary" />
           <span className="text-lg font-semibold tracking-tight hidden sm:inline-block">DevStash</span>
-        </div>
+        </Link>
       </div>
 
       <div className="flex-1 max-w-md">
