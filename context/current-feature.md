@@ -1,27 +1,16 @@
-# Current Feature: Item Drawer
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started|In Progress|Completed -->
 
 ## Goals
 
-- Clicking an ItemCard opens a right-side Sheet drawer with that item's full detail — no page navigation
-- Drawer works from both the dashboard and the `/items/[type]` list pages
-- Header: item title + type badge(s) (type name + language if present) + close button
-- Action bar: Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, right-aligned)
-- Body sections: Description, Content (plain text for now — code editor comes later), Tags, Collections, Details (created/updated dates)
-- Loading state: skeleton while fetching full item data
-- Full item data fetched on click via `GET /api/items/[id]` (auth-checked)
-- Query function `getItemById` added to `lib/db/items.ts`
-- Client wrapper component manages drawer open/close state (pages stay as server components)
+<!-- Goals & requirements -->
 
 ## Notes
 
-- Sheet opens from the right, uses ShadCN Sheet component
-- Card data already in scope from the server render; full detail (content, collections, tags) fetched on click
-- Action bar buttons are UI-only for now — wire up Favorite/Pin/Copy/Delete/Edit functionality in a later feature
-- Reference: `context/screenshots/dashboard-ui-drawer.png`
+<!-- Any extra notes -->
 
 ## History
 
@@ -50,3 +39,4 @@ In Progress
 - Items List View - dynamic /items/[type] route, two-column ItemCard grid with left border colored by type, 404 for unknown types
 - Vitest Setup - unit testing for server actions and utilities; node environment; npm test / test:watch scripts
 - Item List View 3-Column Layout - responsive grid updated to 1-col mobile, 2-col md, 3-col lg+
+- Item Drawer - right-side Sheet drawer on ItemCard click; fetches full item via GET /api/items/[id]; header, action bar (UI-only), scrollable detail body; works on dashboard and items list pages
