@@ -44,3 +44,4 @@
 - Item Delete - AlertDialog confirmation on trash button; deleteItem server action; close drawer + toast + router.refresh() on success
 - Logo Link - DevStash logo/name in top bar links to /dashboard
 - Item Create - Dialog modal from top bar; type selector; type-specific fields; createItem server action with Zod + conditional URL validation; 25 tests passing
+- Code Editor - Monaco editor (vs-dark, macOS dots, copy + language header) for snippet/command types in drawer and create dialog; NewItemButton accepts defaultType/label; items type page shows Add [Type] button pre-selecting that type
