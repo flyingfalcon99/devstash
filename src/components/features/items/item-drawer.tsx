@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
 import { updateItem, deleteItem, type UpdateItemInput } from "@/actions/items";
+import { CodeEditor } from "@/components/ui/code-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -217,9 +218,17 @@ function DrawerBody({ item, onEdit, onClose }: { item: ItemDetail; onEdit: () =>
         {item.content && (
           <section className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Content</p>
-            <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words font-mono">
-              {item.content}
-            </pre>
+            {["snippet", "command"].includes(item.itemType.name) ? (
+              <CodeEditor
+                value={item.content}
+                language={item.language}
+                readOnly
+              />
+            ) : (
+              <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words font-mono">
+                {item.content}
+              </pre>
+            )}
           </section>
         )}
         {item.url && (
@@ -397,13 +406,21 @@ function DrawerEditBody({
         {showContent && (
           <div className="space-y-1.5">
             <label className={fieldLabel}>Content</label>
-            <textarea
-              value={form.content}
-              onChange={(e) => set("content", e.target.value)}
-              placeholder="Paste your content here"
-              rows={8}
-              className={cn(textareaClass, "font-mono text-xs")}
-            />
+            {showLanguage ? (
+              <CodeEditor
+                value={form.content}
+                onChange={(val) => set("content", val)}
+                language={form.language || null}
+              />
+            ) : (
+              <textarea
+                value={form.content}
+                onChange={(e) => set("content", e.target.value)}
+                placeholder="Paste your content here"
+                rows={8}
+                className={cn(textareaClass, "font-mono text-xs")}
+              />
+            )}
           </div>
         )}
 

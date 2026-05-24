@@ -21,7 +21,14 @@
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_click",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(node -e \"require\\('zod'\\)\")",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_wait_for",
+      "Bash(Select-String -Pattern \"vitest\" \"d:\\\\projects\\\\claude-projects\\\\DevStash Project\\\\DevStash\\\\package.json\")",
+      "Bash(npm run *)",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(npm test *)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -16,6 +16,7 @@ import {
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
 import { createItem, type CreateItemInput } from "@/actions/items";
+import { CodeEditor } from "@/components/ui/code-editor";
 
 const ITEM_TYPES = [
   { slug: "snippet", iconKey: "Code" as const, label: "Snippet" },
@@ -34,7 +35,7 @@ const fieldLabel = "text-xs font-medium text-muted-foreground uppercase tracking
 const textareaClass =
   "w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none resize-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
-const initialForm = {
+const defaultForm = {
   type: "snippet" as ItemTypeSlug,
   title: "",
   description: "",
@@ -44,14 +45,19 @@ const initialForm = {
   tags: "",
 };
 
-export function NewItemButton() {
+interface NewItemButtonProps {
+  defaultType?: ItemTypeSlug;
+  label?: string;
+}
+
+export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState({ ...defaultForm, type: defaultType ?? defaultForm.type });
   const [saving, setSaving] = useState(false);
 
   function openDialog() {
-    setForm(initialForm);
+    setForm({ ...defaultForm, type: defaultType ?? defaultForm.type });
     setOpen(true);
   }
 
@@ -93,7 +99,7 @@ export function NewItemButton() {
     <>
       <Button size="sm" className="gap-2" onClick={openDialog}>
         <Plus className="h-4 w-4" />
-        New Item
+        {label ?? "New Item"}
       </Button>
 
       <Dialog open={open} onOpenChange={(o) => { if (!saving) setOpen(o); }}>
@@ -153,13 +159,22 @@ export function NewItemButton() {
             {showContent && (
               <div className="space-y-1.5">
                 <label className={fieldLabel}>Content</label>
-                <textarea
-                  value={form.content}
-                  onChange={(e) => set("content", e.target.value)}
-                  placeholder="Paste your content here"
-                  rows={6}
-                  className={cn(textareaClass, "font-mono text-xs")}
-                />
+                {showLanguage ? (
+                  <CodeEditor
+                    value={form.content}
+                    onChange={(val) => set("content", val)}
+                    language={form.language || null}
+                    maxHeight={240}
+                  />
+                ) : (
+                  <textarea
+                    value={form.content}
+                    onChange={(e) => set("content", e.target.value)}
+                    placeholder="Paste your content here"
+                    rows={6}
+                    className={cn(textareaClass, "font-mono text-xs")}
+                  />
+                )}
               </div>
             )}
 
