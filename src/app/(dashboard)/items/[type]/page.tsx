@@ -45,7 +45,7 @@ export default async function ItemsTypePage({
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No {displayName.toLowerCase()} yet.</p>
       ) : (
-        <ItemsClientWrapper items={items} />
+        <ItemsClientWrapper items={items} typeSlug={typeSlug} />
       )}
     </div>
   );
