@@ -135,6 +135,59 @@ export async function createItemInDb(
   });
 }
 
+export async function createFileItemInDb(
+  userId: string,
+  data: {
+    type: "file" | "image";
+    title: string;
+    description?: string | null;
+    fileUrl: string;
+    fileName: string;
+    fileSize: number;
+    tags: string[];
+  }
+) {
+  const itemType = await prisma.itemType.findFirst({
+    where: { name: data.type, isSystem: true },
+  });
+  if (!itemType) throw new Error(`Unknown item type: ${data.type}`);
+
+  return await prisma.item.create({
+    data: {
+      title: data.title,
+      description: data.description ?? null,
+      fileUrl: data.fileUrl,
+      fileName: data.fileName,
+      fileSize: data.fileSize,
+      contentType: "FILE",
+      userId,
+      itemTypeId: itemType.id,
+      tags: {
+        connectOrCreate: data.tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+    include: {
+      itemType: true,
+      tags: true,
+      collections: {
+        include: { collection: { select: { id: true, name: true } } },
+      },
+    },
+  });
+}
+
+export async function getItemFileUrl(id: string, userId: string) {
+  try {
+    const item = await prisma.item.findFirst({ where: { id, userId }, select: { fileUrl: true } });
+    return item?.fileUrl ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function deleteItemById(id: string, userId: string) {
   try {
     const existing = await prisma.item.findFirst({ where: { id, userId } });

@@ -5,18 +5,27 @@ vi.mock("@/lib/db/items", () => ({
   updateItemById: vi.fn(),
   deleteItemById: vi.fn(),
   createItemInDb: vi.fn(),
+  createFileItemInDb: vi.fn(),
+  getItemFileUrl: vi.fn(),
 }));
+vi.mock("@/lib/r2", () => ({ deleteFromR2: vi.fn() }));
 
 import { deleteItem, updateItem, createItem } from "./items";
 import { auth } from "@/auth";
-import { deleteItemById, updateItemById, createItemInDb } from "@/lib/db/items";
+import { deleteItemById, updateItemById, createItemInDb, getItemFileUrl } from "@/lib/db/items";
+import { deleteFromR2 } from "@/lib/r2";
 
 const mockAuth = vi.mocked(auth);
 const mockDelete = vi.mocked(deleteItemById);
 const mockUpdate = vi.mocked(updateItemById);
 const mockCreate = vi.mocked(createItemInDb);
+const mockGetFileUrl = vi.mocked(getItemFileUrl);
+const mockDeleteFromR2 = vi.mocked(deleteFromR2);
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockGetFileUrl.mockResolvedValue(null);
+});
 
 // ─── deleteItem ───────────────────────────────────────────────────────────────
 
@@ -56,6 +65,27 @@ describe("deleteItem", () => {
     await deleteItem("item-1");
 
     expect(mockDelete).toHaveBeenCalledWith("item-1", "user-42");
+  });
+
+  it("deletes file from R2 when item has a fileUrl", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockGetFileUrl.mockResolvedValue("uploads/user-1/abc.pdf");
+    mockDelete.mockResolvedValue({ id: "item-1" } as never);
+    mockDeleteFromR2.mockResolvedValue(undefined);
+
+    await deleteItem("item-1");
+
+    expect(mockDeleteFromR2).toHaveBeenCalledWith("uploads/user-1/abc.pdf");
+  });
+
+  it("does not call deleteFromR2 when item has no fileUrl", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockGetFileUrl.mockResolvedValue(null);
+    mockDelete.mockResolvedValue({ id: "item-1" } as never);
+
+    await deleteItem("item-1");
+
+    expect(mockDeleteFromR2).not.toHaveBeenCalled();
   });
 });
 

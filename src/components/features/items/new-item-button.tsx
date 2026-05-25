@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
-import { createItem, type CreateItemInput } from "@/actions/items";
+import { createItem, createFileItem, type CreateItemInput, type CreateFileItemInput } from "@/actions/items";
 import { CodeEditor } from "@/components/ui/code-editor";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
+import { FileUpload, type UploadResult } from "@/components/ui/file-upload";
 
 const ITEM_TYPES = [
   { slug: "snippet", iconKey: "Code" as const, label: "Snippet" },
@@ -25,12 +26,15 @@ const ITEM_TYPES = [
   { slug: "command", iconKey: "Terminal" as const, label: "Command" },
   { slug: "note", iconKey: "StickyNote" as const, label: "Note" },
   { slug: "link", iconKey: "Link" as const, label: "Link" },
+  { slug: "file", iconKey: "File" as const, label: "File" },
+  { slug: "image", iconKey: "Image" as const, label: "Image" },
 ] as const;
 
 type ItemTypeSlug = (typeof ITEM_TYPES)[number]["slug"];
 
 const CONTENT_TYPES: ItemTypeSlug[] = ["snippet", "prompt", "command", "note"];
 const LANGUAGE_TYPES: ItemTypeSlug[] = ["snippet", "command"];
+const FILE_TYPES: ItemTypeSlug[] = ["file", "image"];
 
 const fieldLabel = "text-xs font-medium text-muted-foreground uppercase tracking-wider";
 const textareaClass =
@@ -55,10 +59,12 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...defaultForm, type: defaultType ?? defaultForm.type });
+  const [uploaded, setUploaded] = useState<UploadResult | null>(null);
   const [saving, setSaving] = useState(false);
 
   function openDialog() {
     setForm({ ...defaultForm, type: defaultType ?? defaultForm.type });
+    setUploaded(null);
     setOpen(true);
   }
 
@@ -66,22 +72,53 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  function handleTypeChange(slug: string) {
+    set("type", slug);
+    setUploaded(null);
+  }
+
+  function handleUpload(result: UploadResult) {
+    setUploaded(result);
+    if (!form.title) set("title", result.fileName.replace(/\.[^.]+$/, ""));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
 
     const tags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
-    const payload: CreateItemInput = {
-      type: form.type,
-      title: form.title,
-      description: form.description || null,
-      content: form.content || null,
-      url: form.url || null,
-      language: form.language || null,
-      tags,
-    };
+    const isFileType = FILE_TYPES.includes(form.type);
 
-    const result = await createItem(payload);
+    let result;
+    if (isFileType) {
+      if (!uploaded) {
+        toast.error("Please upload a file first");
+        setSaving(false);
+        return;
+      }
+      const payload: CreateFileItemInput = {
+        type: form.type as "file" | "image",
+        title: form.title,
+        description: form.description || null,
+        fileUrl: uploaded.key,
+        fileName: uploaded.fileName,
+        fileSize: uploaded.fileSize,
+        tags,
+      };
+      result = await createFileItem(payload);
+    } else {
+      const payload: CreateItemInput = {
+        type: form.type as CreateItemInput["type"],
+        title: form.title,
+        description: form.description || null,
+        content: form.content || null,
+        url: form.url || null,
+        language: form.language || null,
+        tags,
+      };
+      result = await createItem(payload);
+    }
+
     if (result.success) {
       toast.success("Item created");
       router.refresh();
@@ -95,6 +132,7 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
   const showContent = CONTENT_TYPES.includes(form.type);
   const showLanguage = LANGUAGE_TYPES.includes(form.type);
   const showUrl = form.type === "link";
+  const showFile = FILE_TYPES.includes(form.type);
 
   return (
     <>
@@ -118,7 +156,7 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
                   <button
                     key={slug}
                     type="button"
-                    onClick={() => set("type", slug)}
+                    onClick={() => handleTypeChange(slug)}
                     className={cn(
                       "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs border transition-colors",
                       form.type === slug
@@ -132,6 +170,19 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
                 );
               })}
             </div>
+
+            {/* File upload (file / image) */}
+            {showFile && (
+              <div className="space-y-1.5">
+                <label className={fieldLabel}>File *</label>
+                <FileUpload
+                  itemType={form.type as "file" | "image"}
+                  uploaded={uploaded}
+                  onUpload={handleUpload}
+                  onClear={() => setUploaded(null)}
+                />
+              </div>
+            )}
 
             {/* Title */}
             <div className="space-y-1.5">
@@ -235,7 +286,12 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
               <Button
                 type="submit"
                 size="sm"
-                disabled={saving || !form.title.trim() || (showUrl && !form.url.trim())}
+                disabled={
+                  saving ||
+                  !form.title.trim() ||
+                  (showUrl && !form.url.trim()) ||
+                  (showFile && !uploaded)
+                }
               >
                 {saving ? "Creating…" : "Create"}
               </Button>
