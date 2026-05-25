@@ -17,6 +17,7 @@ import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
 import { createItem, type CreateItemInput } from "@/actions/items";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 
 const ITEM_TYPES = [
   { slug: "snippet", iconKey: "Code" as const, label: "Snippet" },
@@ -164,6 +165,12 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
                     value={form.content}
                     onChange={(val) => set("content", val)}
                     language={form.language || null}
+                    maxHeight={240}
+                  />
+                ) : ["note", "prompt"].includes(form.type) ? (
+                  <MarkdownEditor
+                    value={form.content}
+                    onChange={(val) => set("content", val)}
                     maxHeight={240}
                   />
                 ) : (

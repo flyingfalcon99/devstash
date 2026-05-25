@@ -12,6 +12,7 @@ import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn } from "@/lib/utils";
 import { updateItem, deleteItem, type UpdateItemInput } from "@/actions/items";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -224,6 +225,11 @@ function DrawerBody({ item, onEdit, onClose }: { item: ItemDetail; onEdit: () =>
                 language={item.language}
                 readOnly
               />
+            ) : ["note", "prompt"].includes(item.itemType.name) ? (
+              <MarkdownEditor
+                value={item.content}
+                readOnly
+              />
             ) : (
               <pre className="text-xs bg-muted rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words font-mono">
                 {item.content}
@@ -411,6 +417,11 @@ function DrawerEditBody({
                 value={form.content}
                 onChange={(val) => set("content", val)}
                 language={form.language || null}
+              />
+            ) : ["note", "prompt"].includes(typeName) ? (
+              <MarkdownEditor
+                value={form.content}
+                onChange={(val) => set("content", val)}
               />
             ) : (
               <textarea

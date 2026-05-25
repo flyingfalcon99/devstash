@@ -28,7 +28,8 @@
       "Bash(Select-String -Pattern \"vitest\" \"d:\\\\projects\\\\claude-projects\\\\DevStash Project\\\\DevStash\\\\package.json\")",
       "Bash(npm run *)",
       "mcp__playwright__browser_take_screenshot",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "mcp__playwright__browser_type"
     ]
   },
   "enableAllProjectMcpServers": true,
