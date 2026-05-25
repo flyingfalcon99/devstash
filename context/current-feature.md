@@ -2,15 +2,15 @@
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+Not Started
 
 ## Goals
 
-<!-- Goals & requirements -->
+<!-- Add goals here -->
 
 ## Notes
 
-<!-- Any extra notes -->
+<!-- Add notes here -->
 
 ## History
 
@@ -46,3 +46,4 @@
 - Item Create - Dialog modal from top bar; type selector; type-specific fields; createItem server action with Zod + conditional URL validation; 25 tests passing
 - Code Editor - Monaco editor (vs-dark, macOS dots, copy + language header) for snippet/command types in drawer and create dialog; NewItemButton accepts defaultType/label; items type page shows Add [Type] button pre-selecting that type
 - Markdown Editor - MarkdownEditor with Write/Preview tabs for note/prompt types; react-markdown + remark-gfm; @tailwindcss/typography prose styling; thin-scrollbar utility matching CodeEditor; readonly shows Preview only
+- File & Image Upload - Cloudflare R2 storage; drag-and-drop FileUpload with XHR progress; /api/upload with type/size validation; /api/files/[...key] authenticated download proxy; image preview + file download in ItemDrawer; R2 cleanup on delete; 18 tests passing
