@@ -45,3 +45,4 @@
 - Logo Link - DevStash logo/name in top bar links to /dashboard
 - Item Create - Dialog modal from top bar; type selector; type-specific fields; createItem server action with Zod + conditional URL validation; 25 tests passing
 - Code Editor - Monaco editor (vs-dark, macOS dots, copy + language header) for snippet/command types in drawer and create dialog; NewItemButton accepts defaultType/label; items type page shows Add [Type] button pre-selecting that type
+- Markdown Editor - MarkdownEditor with Write/Preview tabs for note/prompt types; react-markdown + remark-gfm; @tailwindcss/typography prose styling; thin-scrollbar utility matching CodeEditor; readonly shows Preview only
