@@ -11,6 +11,7 @@ export interface ItemCardItem {
   description: string | null;
   isFavorite: boolean;
   language: string | null;
+  fileUrl: string | null;
   createdAt: Date;
   itemType: {
     name: string;
