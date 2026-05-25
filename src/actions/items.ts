@@ -2,7 +2,8 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
-import { updateItemById, deleteItemById, createItemInDb } from "@/lib/db/items";
+import { updateItemById, deleteItemById, createItemInDb, createFileItemInDb, getItemFileUrl } from "@/lib/db/items";
+import { deleteFromR2 } from "@/lib/r2";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Title is required"),
@@ -92,12 +93,45 @@ export async function deleteItem(itemId: string) {
   }
 
   try {
+    const fileUrl = await getItemFileUrl(itemId, session.user.id);
     const deleted = await deleteItemById(itemId, session.user.id);
     if (!deleted) {
       return { success: false as const, error: "Item not found" };
     }
+    if (fileUrl) await deleteFromR2(fileUrl).catch(() => {});
     return { success: true as const };
   } catch {
     return { success: false as const, error: "Failed to delete item" };
+  }
+}
+
+const createFileSchema = z.object({
+  type: z.enum(["file", "image"]),
+  title: z.string().trim().min(1, "Title is required"),
+  description: z.string().nullable().optional(),
+  fileUrl: z.string().min(1, "File is required"),
+  fileName: z.string().min(1),
+  fileSize: z.number().int().positive(),
+  tags: z.array(z.string().trim().min(1)).default([]),
+});
+
+export type CreateFileItemInput = z.infer<typeof createFileSchema>;
+
+export async function createFileItem(rawData: CreateFileItemInput) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Unauthorized" };
+  }
+
+  const parsed = createFileSchema.safeParse(rawData);
+  if (!parsed.success) {
+    return { success: false as const, error: parsed.error.issues[0].message };
+  }
+
+  try {
+    const item = await createFileItemInDb(session.user.id, parsed.data);
+    return { success: true as const, data: item };
+  } catch {
+    return { success: false as const, error: "Failed to create item" };
   }
 }

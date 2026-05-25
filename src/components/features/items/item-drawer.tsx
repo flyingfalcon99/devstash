@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star, Pin, Copy, Pencil, Trash2, File, Check, X } from "lucide-react";
+import { Star, Pin, Copy, Pencil, Trash2, File, Check, X, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,9 @@ interface ItemDetail {
   description: string | null;
   content: string | null;
   url: string | null;
+  fileUrl: string | null;
+  fileName: string | null;
+  fileSize: number | null;
   language: string | null;
   isFavorite: boolean;
   isPinned: boolean;
@@ -38,6 +41,12 @@ interface ItemDetail {
   itemType: { name: string; icon: string; color: string };
   tags: { id: string; name: string }[];
   collections: { collection: { id: string; name: string } }[];
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 interface ItemDrawerProps {
@@ -235,6 +244,39 @@ function DrawerBody({ item, onEdit, onClose }: { item: ItemDetail; onEdit: () =>
                 {item.content}
               </pre>
             )}
+          </section>
+        )}
+        {item.fileUrl && item.itemType.name === "image" && (
+          <section className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Preview</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/api/files/${item.fileUrl}`}
+              alt={item.fileName ?? item.title}
+              className="rounded-md max-h-64 object-contain border border-border"
+            />
+            {item.fileName && (
+              <p className="text-xs text-muted-foreground">{item.fileName}{item.fileSize ? ` · ${formatBytes(item.fileSize)}` : ""}</p>
+            )}
+          </section>
+        )}
+        {item.fileUrl && item.itemType.name === "file" && (
+          <section className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">File</p>
+            <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2.5">
+              <div className="flex items-center gap-2 min-w-0">
+                <File className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="truncate text-xs">{item.fileName ?? "File"}</span>
+                {item.fileSize && <span className="text-xs text-muted-foreground shrink-0">{formatBytes(item.fileSize)}</span>}
+              </div>
+              <a
+                href={`/api/files/${item.fileUrl}`}
+                download={item.fileName ?? true}
+                className="ml-2 text-muted-foreground hover:text-foreground"
+              >
+                <Download className="h-3.5 w-3.5" />
+              </a>
+            </div>
           </section>
         )}
         {item.url && (
