@@ -48,3 +48,4 @@ Not Started
 - Markdown Editor - MarkdownEditor with Write/Preview tabs for note/prompt types; react-markdown + remark-gfm; @tailwindcss/typography prose styling; thin-scrollbar utility matching CodeEditor; readonly shows Preview only
 - File & Image Upload - Cloudflare R2 storage; drag-and-drop FileUpload with XHR progress; /api/upload with type/size validation; /api/files/[...key] authenticated download proxy; image preview + file download in ItemDrawer; R2 cleanup on delete; 18 tests passing
 - Image Gallery View - 3-column thumbnail gallery on /items/images; aspect-video + object-cover; 5% hover zoom with 300ms transition; all other type pages unaffected
+- File List View - single-column list on /items/files; extension-based icons; name, size, date columns; download button with stopPropagation; responsive stacked meta on mobile
