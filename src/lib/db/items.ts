@@ -54,6 +54,7 @@ export async function updateItemById(
     url?: string | null;
     language?: string | null;
     tags: string[];
+    collectionIds?: string[];
   }
 ) {
   try {
@@ -75,6 +76,12 @@ export async function updateItemById(
             create: { name },
           })),
         },
+        ...(data.collectionIds !== undefined && {
+          collections: {
+            deleteMany: {},
+            create: data.collectionIds.map((collectionId) => ({ collectionId })),
+          },
+        }),
       },
       include: {
         itemType: true,
@@ -99,6 +106,7 @@ export async function createItemInDb(
     url?: string | null;
     language?: string | null;
     tags: string[];
+    collectionIds?: string[];
   }
 ) {
   const itemType = await prisma.itemType.findFirst({
@@ -124,6 +132,11 @@ export async function createItemInDb(
           create: { name },
         })),
       },
+      ...(data.collectionIds?.length && {
+        collections: {
+          create: data.collectionIds.map((collectionId) => ({ collectionId })),
+        },
+      }),
     },
     include: {
       itemType: true,
@@ -145,6 +158,7 @@ export async function createFileItemInDb(
     fileName: string;
     fileSize: number;
     tags: string[];
+    collectionIds?: string[];
   }
 ) {
   const itemType = await prisma.itemType.findFirst({
@@ -168,6 +182,11 @@ export async function createFileItemInDb(
           create: { name },
         })),
       },
+      ...(data.collectionIds?.length && {
+        collections: {
+          create: data.collectionIds.map((collectionId) => ({ collectionId })),
+        },
+      }),
     },
     include: {
       itemType: true,

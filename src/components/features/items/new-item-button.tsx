@@ -36,11 +36,16 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
   const [form, setForm] = useState<NewItemFormState>({ ...defaultForm, type: defaultType ?? defaultForm.type });
   const [uploaded, setUploaded] = useState<UploadResult | null>(null);
   const [saving, setSaving] = useState(false);
+  const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
+  const [collectionIds, setCollectionIds] = useState<string[]>([]);
 
-  function openDialog() {
+  async function openDialog() {
     setForm({ ...defaultForm, type: defaultType ?? defaultForm.type });
     setUploaded(null);
+    setCollectionIds([]);
     setOpen(true);
+    const res = await fetch("/api/collections");
+    if (res.ok) setCollections(await res.json());
   }
 
   function set(field: keyof NewItemFormState, value: string) {
@@ -79,6 +84,7 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
         fileName: uploaded.fileName,
         fileSize: uploaded.fileSize,
         tags,
+        collectionIds,
       };
       result = await createFileItem(payload);
     } else {
@@ -90,6 +96,7 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
         url: form.url || null,
         language: form.language || null,
         tags,
+        collectionIds,
       };
       result = await createItem(payload);
     }
@@ -120,6 +127,9 @@ export function NewItemButton({ defaultType, label }: NewItemButtonProps) {
             form={form}
             set={set}
             uploaded={uploaded}
+            collections={collections}
+            collectionIds={collectionIds}
+            onCollectionChange={setCollectionIds}
             onTypeChange={handleTypeChange}
             onUpload={handleUpload}
             onClear={() => setUploaded(null)}

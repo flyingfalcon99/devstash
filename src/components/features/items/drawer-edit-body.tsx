@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { SheetTitle } from "@/components/ui/sheet";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { fieldLabel, textareaClass } from "@/lib/constants/form-styles";
 import { updateItem, type UpdateItemInput } from "@/actions/items";
 import { ItemContentField } from "./item-content-field";
+import { CollectionPicker } from "./collection-picker";
 import type { ItemDetail } from "./item-types";
 
 const CONTENT_TYPES = ["snippet", "prompt", "command", "note"];
@@ -32,6 +33,16 @@ export function DrawerEditBody({ item, onSaveSuccess, onCancel }: DrawerEditBody
     tags: item.tags.map((t) => t.name).join(", "),
   });
   const [saving, setSaving] = useState(false);
+  const [availableCollections, setAvailableCollections] = useState<{ id: string; name: string }[]>([]);
+  const [collectionIds, setCollectionIds] = useState<string[]>(
+    item.collections.map((c) => c.collection.id)
+  );
+
+  useEffect(() => {
+    fetch("/api/collections")
+      .then((r) => r.ok ? r.json() : [])
+      .then(setAvailableCollections);
+  }, []);
 
   const typeName = item.itemType.name;
   const showContent = CONTENT_TYPES.includes(typeName);
@@ -52,6 +63,7 @@ export function DrawerEditBody({ item, onSaveSuccess, onCancel }: DrawerEditBody
       url: form.url || null,
       language: form.language || null,
       tags,
+      collectionIds,
     };
     const result = await updateItem(item.id, payload);
     if (result.success) {
@@ -162,18 +174,11 @@ export function DrawerEditBody({ item, onSaveSuccess, onCancel }: DrawerEditBody
           <p className="text-xs text-muted-foreground">Comma-separated</p>
         </div>
 
-        {item.collections.length > 0 && (
-          <div className="space-y-1.5">
-            <p className={fieldLabel}>Collections</p>
-            <div className="flex flex-wrap gap-1.5">
-              {item.collections.map(({ collection }) => (
-                <Badge key={collection.id} variant="outline" className="text-[10px] px-1.5 py-0 font-normal">
-                  {collection.name}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+        <CollectionPicker
+          collections={availableCollections}
+          selected={collectionIds}
+          onChange={setCollectionIds}
+        />
 
         <div className="space-y-1 text-xs text-muted-foreground pt-1 border-t border-border">
           <div className="flex items-center justify-between pt-2">
