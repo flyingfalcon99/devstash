@@ -7,6 +7,7 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { fieldLabel, textareaClass } from "@/lib/constants/form-styles";
 import { ItemContentField } from "./item-content-field";
+import { CollectionPicker } from "./collection-picker";
 import { FileUpload, type UploadResult } from "@/components/ui/file-upload";
 
 const ITEM_TYPES = [
@@ -39,6 +40,9 @@ interface NewItemFormProps {
   form: NewItemFormState;
   set: (field: keyof NewItemFormState, value: string) => void;
   uploaded: UploadResult | null;
+  collections: { id: string; name: string }[];
+  collectionIds: string[];
+  onCollectionChange: (ids: string[]) => void;
   onTypeChange: (slug: string) => void;
   onUpload: (result: UploadResult) => void;
   onClear: () => void;
@@ -51,6 +55,9 @@ export function NewItemForm({
   form,
   set,
   uploaded,
+  collections,
+  collectionIds,
+  onCollectionChange,
   onTypeChange,
   onUpload,
   onClear,
@@ -168,6 +175,12 @@ export function NewItemForm({
         />
         <p className="text-xs text-muted-foreground">Comma-separated</p>
       </div>
+
+      <CollectionPicker
+        collections={collections}
+        selected={collectionIds}
+        onChange={onCollectionChange}
+      />
 
       <DialogFooter>
         <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={saving}>

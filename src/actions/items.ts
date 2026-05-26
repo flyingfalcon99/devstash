@@ -15,6 +15,7 @@ const schema = z.object({
   ),
   language: z.string().nullable().optional(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 export type UpdateItemInput = {
@@ -24,6 +25,7 @@ export type UpdateItemInput = {
   url: string | null;
   language: string | null;
   tags: string[];
+  collectionIds: string[];
 };
 
 export async function updateItem(itemId: string, rawData: UpdateItemInput) {
@@ -38,7 +40,10 @@ export async function updateItem(itemId: string, rawData: UpdateItemInput) {
   }
 
   try {
-    const updated = await updateItemById(itemId, session.user.id, parsed.data);
+    const updated = await updateItemById(itemId, session.user.id, {
+      ...parsed.data,
+      collectionIds: parsed.data.collectionIds,
+    });
     if (!updated) {
       return { success: false as const, error: "Item not found" };
     }
@@ -59,6 +64,7 @@ const createSchema = z.object({
   ),
   language: z.string().nullable().optional(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  collectionIds: z.array(z.string()).default([]),
 }).superRefine((data, ctx) => {
   if (data.type === "link" && !data.url) {
     ctx.addIssue({ code: "custom", path: ["url"], message: "URL is required for links" });
@@ -113,6 +119,7 @@ const createFileSchema = z.object({
   fileName: z.string().min(1),
   fileSize: z.number().int().positive(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 export type CreateFileItemInput = z.infer<typeof createFileSchema>;

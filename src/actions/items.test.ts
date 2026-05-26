@@ -98,6 +98,7 @@ const validPayload = {
   url: null,
   language: null,
   tags: [],
+  collectionIds: [],
 };
 
 describe("updateItem", () => {
@@ -147,6 +148,19 @@ describe("updateItem", () => {
 
     expect(mockUpdate).toHaveBeenCalledWith("item-1", "user-99", expect.any(Object));
   });
+
+  it("forwards collectionIds to updateItemById", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockUpdate.mockResolvedValue({ id: "item-1" } as never);
+
+    await updateItem("item-1", { ...validPayload, collectionIds: ["col-1", "col-2"] });
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      "item-1",
+      "user-1",
+      expect.objectContaining({ collectionIds: ["col-1", "col-2"] })
+    );
+  });
 });
 
 // ─── createItem ───────────────────────────────────────────────────────────────
@@ -159,6 +173,7 @@ const baseCreate = {
   url: null,
   language: null,
   tags: [],
+  collectionIds: [],
 };
 
 describe("createItem", () => {
@@ -226,5 +241,17 @@ describe("createItem", () => {
     await createItem(baseCreate);
 
     expect(mockCreate).toHaveBeenCalledWith("user-77", expect.any(Object));
+  });
+
+  it("forwards collectionIds to createItemInDb", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockCreate.mockResolvedValue({ id: "new-1" } as never);
+
+    await createItem({ ...baseCreate, collectionIds: ["col-a", "col-b"] });
+
+    expect(mockCreate).toHaveBeenCalledWith(
+      "user-1",
+      expect.objectContaining({ collectionIds: ["col-a", "col-b"] })
+    );
   });
 });
