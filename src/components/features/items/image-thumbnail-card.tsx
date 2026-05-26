@@ -20,6 +20,8 @@ export function ImageThumbnailCard({ item, onOpen }: ImageThumbnailCardProps) {
           <img
             src={`/api/files/${item.fileUrl}`}
             alt={item.title}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

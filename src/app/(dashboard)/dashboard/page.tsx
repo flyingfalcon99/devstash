@@ -10,8 +10,7 @@ import {
   Star,
   Folder,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { itemTypeIconMap } from "@/lib/constants/item-types";
+import { buildCollectionsWithMeta } from "@/lib/dashboard-utils";
 import { DashboardItemsClient } from "@/components/features/items/dashboard-items-client";
 
 export default async function DashboardPage() {
@@ -19,43 +18,14 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect("/sign-in");
   const userId = session.user.id;
 
-  const stats = await getDashboardStats(userId);
-  const dbRecentCollections = await getRecentCollections(userId, 6);
+  const [stats, dbRecentCollections, pinnedItems, recentItems] = await Promise.all([
+    getDashboardStats(userId),
+    getRecentCollections(userId, 6),
+    getPinnedItems(userId),
+    getRecentItems(userId, 10),
+  ]);
 
-  const collectionsWithMeta = dbRecentCollections.map(col => {
-    const typeCounts: Record<string, { count: number, color: string }> = {};
-    const iconsMap = new Map<string, { Icon: LucideIcon, color: string, name: string }>();
-
-    col.items.forEach(ic => {
-      const t = ic.item.itemType;
-      if (t) {
-        if (!typeCounts[t.name]) {
-          typeCounts[t.name] = { count: 0, color: t.color };
-        }
-        typeCounts[t.name].count++;
-        
-        const IconComponent = itemTypeIconMap[t.icon as keyof typeof itemTypeIconMap];
-        if (IconComponent && !iconsMap.has(t.name)) {
-          iconsMap.set(t.name, { Icon: IconComponent, color: t.color, name: t.name });
-        }
-      }
-    });
-
-    let primaryColor: string | undefined = undefined;
-    if (Object.keys(typeCounts).length > 0) {
-      const mostUsed = Object.entries(typeCounts).sort((a, b) => b[1].count - a[1].count)[0];
-      primaryColor = mostUsed[1].color;
-    }
-
-    return {
-      ...col,
-      borderColor: primaryColor,
-      icons: Array.from(iconsMap.values())
-    };
-  });
-
-  const pinnedItems = await getPinnedItems(userId);
-  const recentItems = await getRecentItems(userId, 10);
+  const collectionsWithMeta = buildCollectionsWithMeta(dbRecentCollections);
 
   return (
     <div className="space-y-6">

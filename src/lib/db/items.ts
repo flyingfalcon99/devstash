@@ -222,15 +222,10 @@ export async function getItemsByType(userId: string, typeSlug: string) {
 
 export async function getSidebarItemTypes(userId: string) {
   try {
-    const types = await prisma.itemType.findMany({
-      where: { isSystem: true }
-    });
-
-    const itemCounts = await prisma.item.groupBy({
-      by: ['itemTypeId'],
-      where: { userId },
-      _count: { id: true }
-    });
+    const [types, itemCounts] = await Promise.all([
+      prisma.itemType.findMany({ where: { isSystem: true, userId: null } }),
+      prisma.item.groupBy({ by: ['itemTypeId'], where: { userId }, _count: { id: true } }),
+    ]);
 
     const countMap = itemCounts.reduce((acc, curr) => {
       acc[curr.itemTypeId] = curr._count.id;

@@ -1,15 +1,25 @@
 import { NextRequest, NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
+import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { sendVerificationEmail } from "@/lib/email"
 import { emailVerificationEnabled } from "@/lib/feature-flags"
 
-export async function POST(req: NextRequest) {
-  const { name, email, password, confirmPassword } = await req.json()
+const RegisterSchema = z.object({
+  name: z.string().trim().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+})
 
-  if (!name || !email || !password || !confirmPassword) {
-    return NextResponse.json({ error: "All fields are required" }, { status: 400 })
+export async function POST(req: NextRequest) {
+  const body = await req.json()
+  const parsed = RegisterSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
   }
+
+  const { name, email, password, confirmPassword } = parsed.data
 
   if (password !== confirmPassword) {
     return NextResponse.json({ error: "Passwords do not match" }, { status: 400 })

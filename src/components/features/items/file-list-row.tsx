@@ -1,13 +1,8 @@
 "use client";
 
 import { Download, FileText, FileImage, FileCode, FileJson, File } from "lucide-react";
+import { formatBytes } from "@/lib/utils";
 import type { ItemCardItem } from "./item-card";
-
-function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 function FileTypeIcon({ fileName }: { fileName: string }) {
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "";

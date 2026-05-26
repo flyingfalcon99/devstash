@@ -4,7 +4,7 @@ import { getItemsByType, getItemTypeBySlug } from "@/lib/db/items";
 import { ItemsClientWrapper } from "@/components/features/items/items-client-wrapper";
 import { NewItemButton } from "@/components/features/items/new-item-button";
 
-const CREATABLE_TYPES = ["snippet", "prompt", "command", "note", "link"] as const;
+const CREATABLE_TYPES = ["snippet", "prompt", "command", "note", "link", "file", "image"] as const;
 type CreatableType = (typeof CREATABLE_TYPES)[number];
 
 export default async function ItemsTypePage({

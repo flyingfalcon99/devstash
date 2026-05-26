@@ -1,6 +1,7 @@
 "use client";
 
-import { File, Star, Clock } from "lucide-react";
+import { useState } from "react";
+import { File, Star, Clock, Copy, Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
@@ -9,6 +10,8 @@ export interface ItemCardItem {
   id: string;
   title: string;
   description: string | null;
+  content: string | null;
+  url: string | null;
   isFavorite: boolean;
   language: string | null;
   fileUrl: string | null;
@@ -28,8 +31,19 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, onOpen }: ItemCardProps) {
+  const [copied, setCopied] = useState(false);
   const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
   const color = item.itemType.color;
+  const copyValue = item.content ?? item.url;
+
+  function handleCopy(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!copyValue) return;
+    navigator.clipboard.writeText(copyValue).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
 
   return (
     <button
@@ -47,9 +61,23 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
               <Icon className="h-4 w-4 shrink-0" style={{ color }} />
               <CardTitle className="text-sm font-medium truncate">{item.title}</CardTitle>
             </div>
-            {item.isFavorite && (
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 shrink-0" />
-            )}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {copyValue && (
+                <span
+                  role="button"
+                  onClick={handleCopy}
+                  className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Copy"
+                >
+                  {copied
+                    ? <Check className="h-3 w-3 text-green-500" />
+                    : <Copy className="h-3 w-3" />}
+                </span>
+              )}
+              {item.isFavorite && (
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              )}
+            </div>
           </div>
           <CardDescription className="text-xs line-clamp-2">
             {item.description || "No description"}
