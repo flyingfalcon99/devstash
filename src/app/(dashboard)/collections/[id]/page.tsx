@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getCollectionWithItems } from "@/lib/db/collections";
-import { ItemsClientWrapper } from "@/components/features/items/items-client-wrapper";
+import { CollectionItemsDisplay } from "@/components/features/items/collection-items-display";
 import { Folder, Star } from "lucide-react";
 
 export default async function CollectionDetailPage({
@@ -40,7 +40,7 @@ export default async function CollectionDetailPage({
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No items in this collection yet.</p>
       ) : (
-        <ItemsClientWrapper items={items} />
+        <CollectionItemsDisplay items={items} />
       )}
     </div>
   );
