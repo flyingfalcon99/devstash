@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getFromR2 } from "@/lib/r2";
-import { Readable } from "stream";
 
 export async function GET(
   _req: Request,
@@ -14,6 +13,12 @@ export async function GET(
 
   const { key } = await params;
   const objectKey = key.join("/");
+
+  // Key format: uploads/{userId}/{uuid}.ext — verify ownership
+  const segments = objectKey.split("/");
+  if (segments[0] !== "uploads" || segments[1] !== session.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   try {
     const object = await getFromR2(objectKey);

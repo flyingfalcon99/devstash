@@ -51,6 +51,50 @@ export async function getRecentCollections(userId: string, limit = 6) {
   }
 }
 
+export async function getAllCollections(userId: string) {
+  try {
+    return await prisma.collection.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        items: {
+          include: {
+            item: {
+              select: {
+                itemType: {
+                  select: { name: true, icon: true, color: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch collections: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+export async function getCollectionWithItems(id: string, userId: string) {
+  try {
+    return await prisma.collection.findFirst({
+      where: { id, userId },
+      include: {
+        items: {
+          include: {
+            item: {
+              include: { itemType: true }
+            }
+          },
+          orderBy: { item: { createdAt: 'desc' } }
+        }
+      }
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch collection: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getSidebarCollections(userId: string) {
   try {
     const collections = await prisma.collection.findMany({

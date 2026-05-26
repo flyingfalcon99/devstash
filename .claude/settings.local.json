@@ -29,7 +29,14 @@
       "Bash(npm run *)",
       "mcp__playwright__browser_take_screenshot",
       "Bash(npm test *)",
-      "mcp__playwright__browser_type"
+      "mcp__playwright__browser_type",
+      "Bash(cat .env.local)",
+      "Bash(cat .env)",
+      "Bash(npx vitest *)",
+      "Bash(xargs grep *)",
+      "Bash(find src/app/\\\\\\(dashboard\\\\\\)/collections src/components/features/collections -type f)",
+      "Bash(ls src/app/\\\\\\(dashboard\\\\\\)/collections/)",
+      "Bash(ls src/components/features/collections/)"
     ]
   },
   "enableAllProjectMcpServers": true,
