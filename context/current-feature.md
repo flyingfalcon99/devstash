@@ -50,3 +50,4 @@ Not Started
 - Image Gallery View - 3-column thumbnail gallery on /items/images; aspect-video + object-cover; 5% hover zoom with 300ms transition; all other type pages unaffected
 - File List View - single-column list on /items/files; extension-based icons; name, size, date columns; download button with stopPropagation; responsive stacked meta on mobile
 - Collections Pages & Collection Create - /collections listing page; /collections/[id] detail page with ItemsClientWrapper; createCollection server action (Zod, auth-scoped, 6 tests); NewCollectionButton dialog in top bar; toast + router.refresh(); 404 + empty states; ItemDrawer refactored into sub-components
+- Item-to-Collection Assignment - CollectionPicker checkbox component; multi-select in New Item dialog and Edit Item drawer; createItem/updateItem/createFileItem accept collectionIds; GET /api/collections route; ItemCollection join rows managed atomically; 39 tests passing
