@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Star, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { ItemDrawer } from "@/components/features/items/item-drawer";
 
@@ -24,6 +25,30 @@ interface FavoritesListProps {
   collections: FavoriteCollection[];
 }
 
+type SortKey = "date" | "name" | "type";
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "date", label: "Date" },
+  { key: "name", label: "Name" },
+  { key: "type", label: "Type" },
+];
+
+export function sortItems(list: FavoriteItem[], sort: SortKey): FavoriteItem[] {
+  return [...list].sort((a, b) => {
+    if (sort === "name") return a.title.localeCompare(b.title);
+    if (sort === "type")
+      return a.itemType.name.localeCompare(b.itemType.name) || a.title.localeCompare(b.title);
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+}
+
+export function sortCollections(list: FavoriteCollection[], sort: SortKey): FavoriteCollection[] {
+  return [...list].sort((a, b) => {
+    if (sort === "name" || sort === "type") return a.name.localeCompare(b.name);
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+}
+
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString(undefined, {
     month: "short",
@@ -34,6 +59,7 @@ function formatDate(date: Date) {
 
 export function FavoritesList({ items, collections }: FavoritesListProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortKey>("date");
 
   const isEmpty = items.length === 0 && collections.length === 0;
 
@@ -49,16 +75,43 @@ export function FavoritesList({ items, collections }: FavoritesListProps) {
     );
   }
 
+  const sortedItems = sortItems(items, sort);
+  const sortedCollections = sortCollections(collections, sort);
+
   return (
     <>
       <div className="space-y-6">
-        {items.length > 0 && (
+        {/* Sort controls */}
+        <div className="flex items-center gap-2 px-2">
+          <span className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+            Sort:
+          </span>
+          <div className="flex items-center gap-1">
+            {SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSort(key)}
+                className={cn(
+                  "font-mono text-[10px] px-2 py-0.5 rounded border transition-colors",
+                  sort === key
+                    ? "border-border bg-muted text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border/50"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {sortedItems.length > 0 && (
           <section>
             <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-1 px-2">
-              Items <span className="text-muted-foreground/50">({items.length})</span>
+              Items <span className="text-muted-foreground/50">({sortedItems.length})</span>
             </p>
             <div className="divide-y divide-border/50">
-              {items.map((item) => {
+              {sortedItems.map((item) => {
                 const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap];
                 return (
                   <button
@@ -86,13 +139,13 @@ export function FavoritesList({ items, collections }: FavoritesListProps) {
           </section>
         )}
 
-        {collections.length > 0 && (
+        {sortedCollections.length > 0 && (
           <section>
             <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-1 px-2">
-              Collections <span className="text-muted-foreground/50">({collections.length})</span>
+              Collections <span className="text-muted-foreground/50">({sortedCollections.length})</span>
             </p>
             <div className="divide-y divide-border/50">
-              {collections.map((col) => (
+              {sortedCollections.map((col) => (
                 <Link
                   key={col.id}
                   href={`/collections/${col.id}`}
