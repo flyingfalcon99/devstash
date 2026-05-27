@@ -1,26 +1,16 @@
-# Current Feature: Settings Page
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- `/settings` route exists under the dashboard layout and is auth-protected (redirect to `/sign-in` if unauthenticated)
-- A "Settings" link appears in the sidebar user-icon dropdown (alongside the existing "Profile" link)
-- The gear icon (`<Settings>`) is removed from the sidebar user-button trigger
-- The **Change Password** card (credentials users only) is moved from `/profile` to `/settings`
-- The **Danger Zone / Delete Account** card is moved from `/profile` to `/settings`
-- `/profile` retains only the user info card and the usage stats card
-- Settings page has a clear heading and is visually consistent with the rest of the dashboard
+<!-- Add goals here -->
 
 ## Notes
 
-- Settings page lives at `src/app/(dashboard)/settings/page.tsx` — it inherits the dashboard layout automatically
-- The `ChangePasswordForm` and `DeleteAccountButton` components already exist in `src/components/features/profile/` and can be imported directly into the new settings page
-- The sidebar user dropdown is in `src/components/layout/sidebar-user-menu.tsx`; add a `<Settings>` icon link before "Sign out" and remove the gear icon from the button trigger (line 81-83)
-- "forgot password" in the spec refers to the **Change Password** section on the profile page (not a separate forgot-password link)
-- No new server actions or DB functions are needed — reuse existing ones
+<!-- Add notes here -->
 
 ## History
 
@@ -64,3 +54,4 @@ In Progress
 - Collection Management Actions - Edit/Delete/Favorite(UI) on /collections/[id] header; CollectionCard with 3-dot DropdownMenu on listing and dashboard; updateCollection + deleteCollection server actions; delete cascades join rows only; 51 tests passing
 - Global Search / Command Palette - Cmd+K / Ctrl+K shortcut; TopBar trigger with ⌘K badge; cmdk Command palette with substring filter; items + collections grouped results with type icons; item select opens layout-level drawer, collection select navigates; getSearchData pre-fetched at layout load; 56 tests passing
 - Pagination - PaginationControls (prev/next + page numbers, ellipsis for >7 pages) on /items/[type], /collections, /collections/[id]; ?page search param; server-side skip/take; all limits centralised in lib/constants/pagination.ts; 56 tests passing
+- Settings Page - /settings route with Change Password (credentials only) and Danger Zone cards; Settings link added to sidebar user dropdown; gear icon removed from button trigger; profile page refactored to user info + usage stats only with improved layout
