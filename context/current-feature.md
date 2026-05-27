@@ -6,11 +6,7 @@ Not Started
 
 ## Goals
 
-<!-- Add goals here -->
-
 ## Notes
-
-<!-- Add notes here -->
 
 ## History
 
@@ -58,3 +54,4 @@ Not Started
 - Editor Preferences Settings - editorPreferences Json? column via Prisma migration; updateEditorPreferences server action (Zod, auth-scoped, 8 tests); EditorPreferencesContext at dashboard layout level; Settings page Editor Preferences card with theme/fontSize/tabSize/wordWrap/minimap controls; CodeEditor consumes context; monaco-themes for Monokai and GitHub Dark; 64 tests passing
 - Favorites Page - /favorites route (auth-protected); getFavorites db query with isFavorite filter and updatedAt desc sort (5 tests); compact terminal-style list with monospace font, type icon + title + badge + date rows; item click opens ItemDrawer, collection click navigates; empty state; Star icon in TopBar; 69 tests passing
 - Favorite Toggle - toggleItemFavorite + toggleCollectionFavorite server actions (10 tests); ItemDrawer Favorite button wired with optimistic state; CollectionDetailActions star button active; CollectionCard dropdown Favorite item wired; router.refresh() + error toast on all surfaces; 79 tests passing
+- Favorites Sort - client-side sort controls (Date/Name/Type) on /favorites page; sortItems and sortCollections pure functions; monospace toggle buttons with active state; 79 tests passing
