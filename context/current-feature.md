@@ -1,21 +1,16 @@
-# Current Feature: Pagination
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add pagination to `/items/[type]` and `/collections/[id]` pages
-- Pagination controls at bottom with page numbers and prev/next links
-- Disable (grey out) prev/next when at the first/last page
-- Only fetch the items a single page requires — no fetching all records upfront
+<!-- Add goals here -->
 
 ## Notes
 
-- Constants: `ITEMS_PER_PAGE = 21`, `COLLECTIONS_PER_PAGE = 21`
-- Dashboard limits stay as-is: `DASHBOARD_COLLECTIONS_LIMIT = 6`, `DASHBOARD_RECENT_ITEMS_LIMIT = 10`
-- Use URL search params (`?page=2`) for page state so pages are shareable/bookmarkable
+<!-- Add notes here -->
 
 ## History
 
@@ -58,3 +53,4 @@ In Progress
 - Item-to-Collection Assignment - CollectionPicker checkbox component; multi-select in New Item dialog and Edit Item drawer; createItem/updateItem/createFileItem accept collectionIds; GET /api/collections route; ItemCollection join rows managed atomically; 39 tests passing
 - Collection Management Actions - Edit/Delete/Favorite(UI) on /collections/[id] header; CollectionCard with 3-dot DropdownMenu on listing and dashboard; updateCollection + deleteCollection server actions; delete cascades join rows only; 51 tests passing
 - Global Search / Command Palette - Cmd+K / Ctrl+K shortcut; TopBar trigger with ⌘K badge; cmdk Command palette with substring filter; items + collections grouped results with type icons; item select opens layout-level drawer, collection select navigates; getSearchData pre-fetched at layout load; 56 tests passing
+- Pagination - PaginationControls (prev/next + page numbers, ellipsis for >7 pages) on /items/[type], /collections, /collections/[id]; ?page search param; server-side skip/take; all limits centralised in lib/constants/pagination.ts; 56 tests passing
