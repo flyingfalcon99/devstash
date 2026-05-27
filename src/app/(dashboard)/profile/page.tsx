@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getDashboardStats } from "@/lib/db/collections";
 import { getSidebarItemTypes } from "@/lib/db/items";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { Mail, CalendarDays, Layers, Box } from "lucide-react";
 
@@ -23,30 +22,22 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const [user, oauthAccount] = await Promise.all([
+  const userId = session.user.id;
+
+  const [user, oauthAccount, stats, itemTypes] = await Promise.all([
     prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        password: true,
-        createdAt: true,
-      },
+      where: { id: userId },
+      select: { id: true, name: true, email: true, image: true, createdAt: true },
     }),
     prisma.account.findFirst({
-      where: { userId: session.user.id },
+      where: { userId },
       select: { provider: true },
     }),
+    getDashboardStats(userId),
+    getSidebarItemTypes(userId),
   ]);
 
   if (!user) redirect("/sign-in");
-
-  const [stats, itemTypes] = await Promise.all([
-    getDashboardStats(user.id),
-    getSidebarItemTypes(user.id),
-  ]);
 
   const initials = getInitials(user.name, user.email);
   const accountType = oauthAccount
@@ -69,17 +60,8 @@ export default async function ProfilePage() {
           {/* Avatar + name + account type */}
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14 shrink-0">
-              {user.image ? (
-                <Image
-                  src={user.image}
-                  alt={user.name ?? "Avatar"}
-                  width={56}
-                  height={56}
-                  className="rounded-full object-cover"
-                />
-              ) : (
-                <AvatarFallback className="text-xl bg-muted">{initials}</AvatarFallback>
-              )}
+              <AvatarImage src={user.image ?? undefined} alt={user.name ?? "Avatar"} />
+              <AvatarFallback className="text-xl bg-muted">{initials}</AvatarFallback>
             </Avatar>
             <div className="space-y-0.5">
               {user.name && <p className="font-semibold text-base">{user.name}</p>}

@@ -4,39 +4,63 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type FormFields = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 export function ChangePasswordForm() {
-  const [form, setForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [form, setForm] = useState<FormFields>({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const [loading, setLoading] = useState(false);
 
-  function update(field: string, value: string) {
+  function update(field: keyof FormFields, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
 
-    const res = await fetch("/api/profile/change-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      toast.error(data.error ?? "Failed to update password.");
-    } else {
-      toast.success("Password updated successfully.");
-      setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    if (form.newPassword !== form.confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
     }
-    setLoading(false);
+
+    if (form.newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/profile/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error ?? "Failed to update password.");
+      } else {
+        toast.success("Password updated successfully.");
+        setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-2">
-        <label htmlFor="currentPassword" className="text-sm font-medium">Current password</label>
+        <Label htmlFor="currentPassword">Current password</Label>
         <Input
           id="currentPassword"
           type="password"
@@ -48,7 +72,7 @@ export function ChangePasswordForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="newPassword" className="text-sm font-medium">New password</label>
+        <Label htmlFor="newPassword">New password</Label>
         <Input
           id="newPassword"
           type="password"
@@ -60,7 +84,7 @@ export function ChangePasswordForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm new password</label>
+        <Label htmlFor="confirmPassword">Confirm new password</Label>
         <Input
           id="confirmPassword"
           type="password"

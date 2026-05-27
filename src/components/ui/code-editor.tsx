@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { type BeforeMount } from "@monaco-editor/react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEditorPreferences } from "@/context/editor-preferences-context";
 
 const LANGUAGE_MAP: Record<string, string> = {
   typescript: "typescript",
@@ -57,6 +58,19 @@ function calcEditorHeight(value: string, maxHeight: number): number {
   return Math.min(Math.max(lines * LINE_HEIGHT + 16, MIN_HEIGHT), maxHeight);
 }
 
+const handleBeforeMount: BeforeMount = async (monaco) => {
+  try {
+    const [{ default: monokai }, { default: githubDark }] = await Promise.all([
+      import("monaco-themes/themes/Monokai.json"),
+      import("monaco-themes/themes/GitHub Dark.json"),
+    ]);
+    monaco.editor.defineTheme("monokai", monokai as Parameters<typeof monaco.editor.defineTheme>[1]);
+    monaco.editor.defineTheme("github-dark", githubDark as Parameters<typeof monaco.editor.defineTheme>[1]);
+  } catch {
+    // theme loading is non-critical; editor falls back to vs-dark
+  }
+};
+
 interface CodeEditorProps {
   value: string;
   onChange?: (value: string) => void;
@@ -75,6 +89,8 @@ export function CodeEditor({
   className,
 }: CodeEditorProps) {
   const [copied, setCopied] = useState(false);
+  const { prefs } = useEditorPreferences();
+
   const monacoLang = toMonacoLanguage(language);
   const editorHeight = calcEditorHeight(value, maxHeight);
 
@@ -116,7 +132,8 @@ export function CodeEditor({
           value={value}
           onChange={(val) => onChange?.(val ?? "")}
           language={monacoLang}
-          theme="vs-dark"
+          theme={prefs.theme}
+          beforeMount={handleBeforeMount}
           loading={
             <div className="h-full w-full bg-[#1e1e1e] flex items-center justify-center">
               <span className="text-xs text-[#858585]">Loading editor…</span>
@@ -124,12 +141,13 @@ export function CodeEditor({
           }
           options={{
             readOnly,
-            minimap: { enabled: false },
+            minimap: { enabled: prefs.minimap },
             lineNumbers: readOnly ? "off" : "on",
             scrollBeyondLastLine: false,
-            fontSize: 12,
+            fontSize: prefs.fontSize,
+            tabSize: prefs.tabSize,
             fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace",
-            wordWrap: "on",
+            wordWrap: prefs.wordWrap ? "on" : "off",
             automaticLayout: true,
             scrollbar: {
               vertical: "auto",
