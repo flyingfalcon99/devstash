@@ -84,13 +84,13 @@ async function main() {
     const prodUserId = prodUser.id;
 
     // ── 3. Build dev type name → prod type ID map ─────────────────────────────
-    // Prod's seed already created item types for the prod demo user.
-    // Match by name so we can assign the correct prod type IDs to items.
+    // The sidebar queries global system types (userId: null). Items must link to
+    // those same global type IDs so the counts add up correctly.
 
-    const prodTypes = await prodDb.itemType.findMany({ where: { userId: prodUserId } });
-    const typeNameToId = new Map(prodTypes.map(t => [t.name, t.id]));
+    const prodGlobalTypes = await prodDb.itemType.findMany({ where: { isSystem: true, userId: null } });
+    const typeNameToId = new Map(prodGlobalTypes.map(t => [t.name, t.id]));
 
-    // Create any types missing from prod (shouldn't happen after seed, but safe)
+    // Create any global types missing from prod (safety net)
     for (const devType of usedTypes) {
       if (!typeNameToId.has(devType.name)) {
         const created = await prodDb.itemType.create({
@@ -98,12 +98,12 @@ async function main() {
             name: devType.name,
             icon: devType.icon,
             color: devType.color,
-            isSystem: devType.isSystem,
-            userId: prodUserId,
+            isSystem: true,
+            userId: null,
           },
         });
         typeNameToId.set(devType.name, created.id);
-        console.log(`  Created missing item type: ${devType.name}`);
+        console.log(`  Created missing global item type: ${devType.name}`);
       }
     }
     console.log(`Item type map: ${[...typeNameToId.keys()].join(', ')}`);
