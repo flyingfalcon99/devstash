@@ -2,21 +2,11 @@
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-UI Fixes - Stage 1: Critical Accessibility Issues
-
-Fix three critical accessibility/usability issues identified in the UI review:
-1. Copy button on ItemCard is not keyboard-focusable (missing tabIndex + keyboard handler)
-2. Sidebar user menu custom dropdown has no keyboard navigation (no role, no Escape/arrow keys)
-3. Duplicate ItemDrawer mounted simultaneously on dashboard (layout-level + DashboardItemsClient)
-
 ## Notes
-
-- Sidebar user menu will be replaced with ShadCN DropdownMenu for full keyboard/screen-reader support
-- Duplicate drawer resolved by extracting a shared ItemDrawerContext so all item-open triggers go through a single drawer at layout level
 
 ## History
 
@@ -68,3 +58,4 @@ Fix three critical accessibility/usability issues identified in the UI review:
 - Pinned Items - toggleItemPin server action (5 tests); Pin button in ItemDrawer wired with optimistic state + blue active styling; pin icon static indicator on ItemCard; pin-first orderBy on /items/[type] and collection item listings; 84 tests passing
 - Homepage Mockup - static marketing prototype at prototypes/homepage/; chaos-to-order hero with rAF icon animation + mouse repel; 6 feature cards, AI/Pro section, pricing with yearly toggle, scroll fade-in, responsive layout
 - Homepage - production Next.js homepage at /; 12 components in src/components/marketing/ (4 client: HomeNav, ChaosVisual, PricingToggle, FadeIn; 8 server); chaos hero visual, features grid, AI section, pricing with yearly toggle, footer; all CTAs wired to /sign-in and /register; 84 tests passing
+- UI Fixes Stage 1 (Critical A11y) - ItemCard outer wrapper changed to div[role=button] to fix nested interactive element HTML violation; copy span gains tabIndex+onKeyDown for keyboard operability; SidebarUserMenu replaced with ShadCN DropdownMenu (Base UI) for full keyboard nav + Escape-to-close + role=menu; ItemDrawerContext created with singleton drawer at layout level, removing duplicate ItemDrawer from DashboardItemsClient, FavoritesList, ItemsClientWrapper, CollectionItemsDisplay
