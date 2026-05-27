@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getCollectionWithItems } from "@/lib/db/collections";
 import { CollectionItemsDisplay } from "@/components/features/items/collection-items-display";
+import { CollectionDetailActions } from "@/components/features/collections/collection-detail-actions";
 import { Folder, Star } from "lucide-react";
 
 export default async function CollectionDetailPage({
@@ -20,17 +21,24 @@ export default async function CollectionDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Folder className="h-5 w-5 text-primary shrink-0" />
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">{collection.name}</h1>
-            {collection.isFavorite && <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-2 min-w-0">
+          <Folder className="h-5 w-5 text-primary shrink-0" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight truncate">{collection.name}</h1>
+              {collection.isFavorite && <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 shrink-0" />}
+            </div>
+            {collection.description && (
+              <p className="text-muted-foreground text-sm">{collection.description}</p>
+            )}
           </div>
-          {collection.description && (
-            <p className="text-muted-foreground text-sm">{collection.description}</p>
-          )}
         </div>
+        <CollectionDetailActions
+          id={collection.id}
+          name={collection.name}
+          description={collection.description}
+        />
       </div>
 
       <p className="text-sm text-muted-foreground">

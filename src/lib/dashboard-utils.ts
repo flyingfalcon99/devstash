@@ -1,6 +1,3 @@
-import type { LucideIcon } from "lucide-react";
-import { itemTypeIconMap } from "@/lib/constants/item-types";
-
 interface RawCollection {
   items: Array<{
     item: {
@@ -9,19 +6,24 @@ interface RawCollection {
   }>;
 }
 
+export interface CollectionIconMeta {
+  iconKey: string;
+  color: string;
+  name: string;
+}
+
 export function buildCollectionsWithMeta<T extends RawCollection>(collections: T[]) {
   return collections.map((col) => {
     const typeCounts: Record<string, { count: number; color: string }> = {};
-    const iconsMap = new Map<string, { Icon: LucideIcon; color: string; name: string }>();
+    const iconsMap = new Map<string, CollectionIconMeta>();
 
     col.items.forEach((ic) => {
       const t = ic.item.itemType;
       if (t) {
         if (!typeCounts[t.name]) typeCounts[t.name] = { count: 0, color: t.color };
         typeCounts[t.name].count++;
-        const IconComponent = itemTypeIconMap[t.icon as keyof typeof itemTypeIconMap];
-        if (IconComponent && !iconsMap.has(t.name)) {
-          iconsMap.set(t.name, { Icon: IconComponent, color: t.color, name: t.name });
+        if (!iconsMap.has(t.name)) {
+          iconsMap.set(t.name, { iconKey: t.icon, color: t.color, name: t.name });
         }
       }
     });
