@@ -12,7 +12,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-import { createCollection, updateCollection, deleteCollection } from "./collections";
+import { createCollection, updateCollection, deleteCollection, toggleCollectionFavorite } from "./collections";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -237,5 +237,68 @@ describe("deleteCollection", () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toBe("Constraint violation");
+  });
+});
+
+// ─── toggleCollectionFavorite ─────────────────────────────────────────────────
+
+describe("toggleCollectionFavorite", () => {
+  it("returns error when not authenticated", async () => {
+    mockAuth.mockResolvedValue(null as never);
+
+    const result = await toggleCollectionFavorite("col-1");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Not authenticated");
+    expect(mockFindFirst).not.toHaveBeenCalled();
+  });
+
+  it("returns error when collection not found", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockFindFirst.mockResolvedValue(null);
+
+    const result = await toggleCollectionFavorite("missing");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Collection not found");
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it("flips isFavorite from false to true", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockFindFirst.mockResolvedValue({ id: "col-1", isFavorite: false } as never);
+    mockUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleCollectionFavorite("col-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isFavorite).toBe(true);
+    expect(mockUpdate).toHaveBeenCalledWith({
+      where: { id: "col-1" },
+      data: { isFavorite: true },
+    });
+  });
+
+  it("flips isFavorite from true to false", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockFindFirst.mockResolvedValue({ id: "col-1", isFavorite: true } as never);
+    mockUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleCollectionFavorite("col-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isFavorite).toBe(false);
+  });
+
+  it("scopes ownership check to authenticated user", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-42" } } as never);
+    mockFindFirst.mockResolvedValue({ id: "col-1", isFavorite: false } as never);
+    mockUpdate.mockResolvedValue({} as never);
+
+    await toggleCollectionFavorite("col-1");
+
+    expect(mockFindFirst).toHaveBeenCalledWith({
+      where: { id: "col-1", userId: "user-42" },
+    });
   });
 });

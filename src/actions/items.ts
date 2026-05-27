@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { updateItemById, deleteItemById, createItemInDb, createFileItemInDb, getItemFileUrl } from "@/lib/db/items";
 import { deleteFromR2 } from "@/lib/r2";
 
@@ -89,6 +90,21 @@ export async function createItem(rawData: CreateItemInput) {
     return { success: true as const, data: item };
   } catch {
     return { success: false as const, error: "Failed to create item" };
+  }
+}
+
+export async function toggleItemFavorite(itemId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false as const, error: "Unauthorized" };
+
+  try {
+    const existing = await prisma.item.findFirst({ where: { id: itemId, userId: session.user.id } });
+    if (!existing) return { success: false as const, error: "Item not found" };
+
+    await prisma.item.update({ where: { id: itemId }, data: { isFavorite: !existing.isFavorite } });
+    return { success: true as const, isFavorite: !existing.isFavorite };
+  } catch {
+    return { success: false as const, error: "Failed to update favorite" };
   }
 }
 

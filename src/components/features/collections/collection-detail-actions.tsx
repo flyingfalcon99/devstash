@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,22 +25,38 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { fieldLabel, textareaClass } from "@/lib/constants/form-styles";
-import { updateCollection, deleteCollection } from "@/actions/collections";
+import { updateCollection, deleteCollection, toggleCollectionFavorite } from "@/actions/collections";
 
 interface CollectionDetailActionsProps {
   id: string;
   name: string;
   description: string | null;
+  isFavorite: boolean;
 }
 
-export function CollectionDetailActions({ id, name, description }: CollectionDetailActionsProps) {
+export function CollectionDetailActions({ id, name, description, isFavorite: initialIsFavorite }: CollectionDetailActionsProps) {
   const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editName, setEditName] = useState(name);
   const [editDescription, setEditDescription] = useState(description ?? "");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  async function handleToggleFavorite() {
+    setTogglingFavorite(true);
+    setIsFavorite((prev) => !prev);
+    const result = await toggleCollectionFavorite(id);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setIsFavorite((prev) => !prev);
+      toast.error(result.error ?? "Failed to update favorite");
+    }
+    setTogglingFavorite(false);
+  }
 
   function openEdit() {
     setEditName(name);
@@ -92,11 +109,12 @@ export function CollectionDetailActions({ id, name, description }: CollectionDet
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          title="Favorite (coming soon)"
-          disabled
+          className={cn("h-8 w-8", isFavorite ? "text-yellow-400 hover:text-yellow-500" : "text-muted-foreground hover:text-foreground")}
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          onClick={handleToggleFavorite}
+          disabled={togglingFavorite}
         >
-          <Star className="h-4 w-4" />
+          <Star className={cn("h-4 w-4", isFavorite && "fill-yellow-400")} />
         </Button>
         <Button
           variant="ghost"

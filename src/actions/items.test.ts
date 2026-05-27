@@ -8,11 +8,15 @@ vi.mock("@/lib/db/items", () => ({
   createFileItemInDb: vi.fn(),
   getItemFileUrl: vi.fn(),
 }));
+vi.mock("@/lib/prisma", () => ({
+  prisma: { item: { findFirst: vi.fn(), update: vi.fn() } },
+}));
 vi.mock("@/lib/r2", () => ({ deleteFromR2: vi.fn() }));
 
-import { deleteItem, updateItem, createItem } from "./items";
+import { deleteItem, updateItem, createItem, toggleItemFavorite } from "./items";
 import { auth } from "@/auth";
 import { deleteItemById, updateItemById, createItemInDb, getItemFileUrl } from "@/lib/db/items";
+import { prisma } from "@/lib/prisma";
 import { deleteFromR2 } from "@/lib/r2";
 
 const mockAuth = vi.mocked(auth);
@@ -21,6 +25,8 @@ const mockUpdate = vi.mocked(updateItemById);
 const mockCreate = vi.mocked(createItemInDb);
 const mockGetFileUrl = vi.mocked(getItemFileUrl);
 const mockDeleteFromR2 = vi.mocked(deleteFromR2);
+const mockItemFindFirst = vi.mocked(prisma.item.findFirst);
+const mockItemUpdate = vi.mocked(prisma.item.update);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -253,5 +259,68 @@ describe("createItem", () => {
       "user-1",
       expect.objectContaining({ collectionIds: ["col-a", "col-b"] })
     );
+  });
+});
+
+// ─── toggleItemFavorite ───────────────────────────────────────────────────────
+
+describe("toggleItemFavorite", () => {
+  it("returns error when not authenticated", async () => {
+    mockAuth.mockResolvedValue(null as never);
+
+    const result = await toggleItemFavorite("item-1");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Unauthorized");
+    expect(mockItemFindFirst).not.toHaveBeenCalled();
+  });
+
+  it("returns error when item not found", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue(null);
+
+    const result = await toggleItemFavorite("missing");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Item not found");
+    expect(mockItemUpdate).not.toHaveBeenCalled();
+  });
+
+  it("flips isFavorite from false to true", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isFavorite: false } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleItemFavorite("item-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isFavorite).toBe(true);
+    expect(mockItemUpdate).toHaveBeenCalledWith({
+      where: { id: "item-1" },
+      data: { isFavorite: true },
+    });
+  });
+
+  it("flips isFavorite from true to false", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isFavorite: true } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleItemFavorite("item-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isFavorite).toBe(false);
+  });
+
+  it("scopes ownership check to authenticated user", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-42" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isFavorite: false } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    await toggleItemFavorite("item-1");
+
+    expect(mockItemFindFirst).toHaveBeenCalledWith({
+      where: { id: "item-1", userId: "user-42" },
+    });
   });
 });

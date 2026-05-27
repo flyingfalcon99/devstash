@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn, formatBytes } from "@/lib/utils";
-import { deleteItem } from "@/actions/items";
+import { deleteItem, toggleItemFavorite } from "@/actions/items";
 import { ItemContentField } from "./item-content-field";
 import {
   AlertDialog,
@@ -33,8 +33,23 @@ export function DrawerViewBody({ item, onEdit, onClose }: DrawerViewBodyProps) {
   const router = useRouter();
   const Icon = itemTypeIconMap[item.itemType.icon as keyof typeof itemTypeIconMap] || File;
   const color = item.itemType.color;
+  const [isFavorite, setIsFavorite] = useState(item.isFavorite);
+  const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  async function handleToggleFavorite() {
+    setTogglingFavorite(true);
+    setIsFavorite((prev) => !prev);
+    const result = await toggleItemFavorite(item.id);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setIsFavorite((prev) => !prev);
+      toast.error(result.error ?? "Failed to update favorite");
+    }
+    setTogglingFavorite(false);
+  }
 
   async function handleDelete() {
     setDeleting(true);
@@ -73,10 +88,12 @@ export function DrawerViewBody({ item, onEdit, onClose }: DrawerViewBodyProps) {
         <Button
           variant="ghost"
           size="sm"
-          className={cn("h-7 px-2 text-xs gap-1.5", item.isFavorite && "text-yellow-500")}
+          className={cn("h-7 px-2 text-xs gap-1.5", isFavorite && "text-yellow-500")}
+          onClick={handleToggleFavorite}
+          disabled={togglingFavorite}
         >
-          <Star className={cn("h-3.5 w-3.5", item.isFavorite && "fill-yellow-400 text-yellow-400")} />
-          Favorite
+          <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-yellow-400 text-yellow-400")} />
+          {isFavorite ? "Favorited" : "Favorite"}
         </Button>
         <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5">
           <Pin className="h-3.5 w-3.5" />
