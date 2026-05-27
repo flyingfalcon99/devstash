@@ -116,7 +116,7 @@ export async function getCollectionWithItems(id: string, userId: string) {
               include: { itemType: true }
             }
           },
-          orderBy: { item: { createdAt: 'desc' } }
+          orderBy: [{ item: { isPinned: 'desc' } }, { item: { createdAt: 'desc' } }]
         }
       }
     });
@@ -146,7 +146,7 @@ export async function getCollectionItemsPaginated(
       prisma.itemCollection.findMany({
         where: { collectionId },
         include: { item: { include: { itemType: true } } },
-        orderBy: { item: { createdAt: 'desc' } },
+        orderBy: [{ item: { isPinned: 'desc' } }, { item: { createdAt: 'desc' } }],
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { File, Star, Clock, Copy, Check } from "lucide-react";
+import { File, Star, Pin, Clock, Copy, Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
@@ -13,6 +13,7 @@ export interface ItemCardItem {
   content: string | null;
   url: string | null;
   isFavorite: boolean;
+  isPinned: boolean;
   language: string | null;
   fileUrl: string | null;
   fileName: string | null;
@@ -73,6 +74,9 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
                     ? <Check className="h-3 w-3 text-green-500" />
                     : <Copy className="h-3 w-3" />}
                 </span>
+              )}
+              {item.isPinned && (
+                <Pin className="h-3 w-3 fill-blue-400 text-blue-400" />
               )}
               {item.isFavorite && (
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
