@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Search, Menu, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search, Menu, Package, Star } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { NewItemButton } from "@/components/features/items/new-item-button";
 import { NewCollectionButton } from "@/components/features/collections/new-collection-button";
 
@@ -39,6 +40,13 @@ export function TopBar({ onOpenMobile, onOpenPalette }: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        <Link
+          href="/favorites"
+          title="Favorites"
+          className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+        >
+          <Star className="h-4 w-4" />
+        </Link>
         <NewCollectionButton />
         <NewItemButton />
       </div>
