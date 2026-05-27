@@ -40,8 +40,8 @@ export function HomeNav() {
         </Link>
 
         <ul className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-          <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-          <li><a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
+          <li><a href="/#features" className="hover:text-foreground transition-colors">Features</a></li>
+          <li><a href="/#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
         </ul>
 
         <div className="flex items-center gap-2">
@@ -66,14 +66,14 @@ export function HomeNav() {
       {mobileOpen && (
         <div className="md:hidden border-t border-border bg-background/95 backdrop-blur px-6 py-4 flex flex-col gap-1">
           <a
-            href="#features"
+            href="/#features"
             onClick={closeMobile}
             className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
             Features
           </a>
           <a
-            href="#pricing"
+            href="/#pricing"
             onClick={closeMobile}
             className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
