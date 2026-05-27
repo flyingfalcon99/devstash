@@ -101,7 +101,7 @@ export function ChaosVisual() {
       <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-2">
         Your knowledge today...
       </p>
-      <div ref={containerRef} className="relative overflow-hidden" style={{ height: 200 }}>
+      <div ref={containerRef} className="relative overflow-hidden h-[160px] sm:h-[200px]">
         {ICONS.map(({ emoji, label }) => (
           <div
             key={label}

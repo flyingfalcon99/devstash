@@ -2,9 +2,16 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
+
+UI Fixes - Stage 3: Medium Priority Issues
+
+1. ChaosVisual: replace hardcoded `style={{ height: 200 }}` with responsive Tailwind classes (smaller on mobile)
+2. Dashboard stat cards: "Favorite Collections" uses same Star icon as "Favorite Items" — replace with Bookmark
+3. TopBar: "DevStash" text hidden below 640px — always show brand name; collapse search to icon-only on mobile to preserve layout
+4. ItemCard: copy button tap target too small (p-0.5 → p-1.5 for 24px touch area)
 
 ## Notes
 

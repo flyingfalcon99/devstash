@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { getDashboardStats, getRecentCollections } from "@/lib/db/collections";
 import { getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { File, Star, Folder } from "lucide-react";
+import { File, Star, Folder, Bookmark } from "lucide-react";
 import { buildCollectionsWithMeta } from "@/lib/dashboard-utils";
 import { CollectionCard } from "@/components/features/collections/collection-card";
 import { DashboardItemsClient } from "@/components/features/items/dashboard-items-client";
@@ -63,7 +63,7 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Favorite Collections</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+            <Bookmark className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.favoriteCollections}</div>

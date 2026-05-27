@@ -85,7 +85,7 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
                   tabIndex={0}
                   onClick={handleCopy}
                   onKeyDown={handleCopyKeyDown}
-                  className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                  className="p-1.5 rounded text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
                   aria-label="Copy"
                 >
                   {copied
