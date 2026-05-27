@@ -1,25 +1,12 @@
-# Current Feature: Homepage Mockup
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Static marketing homepage at `prototypes/homepage/` (index.html + styles.css + script.js)
-- Hero "chaos to order" visual: floating icons (Notion, GitHub, Slack, etc.) bouncing + mouse-repel on left; pulsing arrow center; dashboard preview on right
-- Full page sections: Nav, Hero Text, Features (6 cards), AI Section, Pricing (Free/Pro + yearly toggle), CTA, Footer
-- Scroll fade-in animations; navbar opacity on scroll
-- Responsive: stacked on mobile, arrow rotates 90°
-
 ## Notes
-
-- **Output**: `prototypes/homepage/index.html`, `styles.css`, `script.js` — plain HTML/CSS/JS, no build step
-- **Color palette**: Snippet #3b82f6, Prompt #f59e0b, Command #06b6d4, Note #22c55e, File #64748b, Image #ec4899, URL #6366f1
-- **Chaos icons**: requestAnimationFrame drift + bounce off walls + mouse-cursor repel on hover
-- **Dashboard preview**: simplified sidebar + item card grid with colored top borders
-- **Pricing**: Free ($0, 50 items, 3 collections) vs Pro ($8/mo, unlimited, AI); Pro = "Most Popular"; yearly toggle = $72/yr
-- **No tests needed** — pure static prototype with no server logic
 
 ## History
 
@@ -69,3 +56,4 @@ In Progress
 - Favorite Toggle - toggleItemFavorite + toggleCollectionFavorite server actions (10 tests); ItemDrawer Favorite button wired with optimistic state; CollectionDetailActions star button active; CollectionCard dropdown Favorite item wired; router.refresh() + error toast on all surfaces; 79 tests passing
 - Favorites Sort - client-side sort controls (Date/Name/Type) on /favorites page; sortItems and sortCollections pure functions; monospace toggle buttons with active state; 79 tests passing
 - Pinned Items - toggleItemPin server action (5 tests); Pin button in ItemDrawer wired with optimistic state + blue active styling; pin icon static indicator on ItemCard; pin-first orderBy on /items/[type] and collection item listings; 84 tests passing
+- Homepage Mockup - static marketing prototype at prototypes/homepage/; chaos-to-order hero with rAF icon animation + mouse repel; 6 feature cards, AI/Pro section, pricing with yearly toggle, scroll fade-in, responsive layout
