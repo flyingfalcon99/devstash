@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Folder, Star, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { fieldLabel, textareaClass } from "@/lib/constants/form-styles";
-import { updateCollection, deleteCollection } from "@/actions/collections";
+import { updateCollection, deleteCollection, toggleCollectionFavorite } from "@/actions/collections";
 
 export interface CollectionCardData {
   id: string;
@@ -51,12 +52,25 @@ interface CollectionCardProps {
 
 export function CollectionCard({ collection, onDeleted }: CollectionCardProps) {
   const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(collection.isFavorite);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [name, setName] = useState(collection.name);
   const [description, setDescription] = useState(collection.description ?? "");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  async function handleToggleFavorite(e: React.MouseEvent) {
+    e.stopPropagation();
+    setIsFavorite((prev) => !prev);
+    const result = await toggleCollectionFavorite(collection.id);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setIsFavorite((prev) => !prev);
+      toast.error(result.error ?? "Failed to update favorite");
+    }
+  }
 
   function openEdit(e: React.MouseEvent) {
     e.stopPropagation();
@@ -121,7 +135,7 @@ export function CollectionCard({ collection, onDeleted }: CollectionCardProps) {
               <CardTitle className="text-sm font-medium truncate">{collection.name}</CardTitle>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              {collection.isFavorite && (
+              {isFavorite && (
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
               )}
               <DropdownMenu>
@@ -136,9 +150,9 @@ export function CollectionCard({ collection, onDeleted }: CollectionCardProps) {
                     <Pencil className="h-3.5 w-3.5 mr-2" />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled>
-                    <Star className="h-3.5 w-3.5 mr-2" />
-                    Favorite
+                  <DropdownMenuItem onClick={handleToggleFavorite}>
+                    <Star className={cn("h-3.5 w-3.5 mr-2", isFavorite && "fill-yellow-400 text-yellow-400")} />
+                    {isFavorite ? "Remove from favorites" : "Add to favorites"}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem variant="destructive" onClick={openDelete}>

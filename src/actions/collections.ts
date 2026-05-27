@@ -70,3 +70,18 @@ export async function deleteCollection(id: string) {
     return { success: false, error: err instanceof Error ? err.message : "Failed to delete collection" };
   }
 }
+
+export async function toggleCollectionFavorite(id: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false as const, error: "Not authenticated" };
+
+  try {
+    const existing = await prisma.collection.findFirst({ where: { id, userId: session.user.id } });
+    if (!existing) return { success: false as const, error: "Collection not found" };
+
+    await prisma.collection.update({ where: { id }, data: { isFavorite: !existing.isFavorite } });
+    return { success: true as const, isFavorite: !existing.isFavorite };
+  } catch (err) {
+    return { success: false as const, error: err instanceof Error ? err.message : "Failed to update favorite" };
+  }
+}
