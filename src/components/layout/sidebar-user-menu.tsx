@@ -41,6 +41,14 @@ export function SidebarUserMenu({ user, isCollapsed, initials }: SidebarUserMenu
               <User className="h-4 w-4 shrink-0" />
               Profile
             </Link>
+            <Link
+              href="/settings"
+              onClick={() => setDropdownOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            >
+              <Settings className="h-4 w-4 shrink-0" />
+              Settings
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/sign-in" })}
               className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-muted/50 transition-colors"
@@ -76,9 +84,6 @@ export function SidebarUserMenu({ user, isCollapsed, initials }: SidebarUserMenu
               <p className="text-xs font-medium truncate">{user.name}</p>
               <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
-          )}
-          {!isCollapsed && (
-            <Settings className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           )}
         </button>
       </div>
