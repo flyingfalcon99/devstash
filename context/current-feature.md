@@ -1,31 +1,12 @@
-# Current Feature: Homepage
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- `src/app/page.tsx` root route — public, no auth required
-- `HomeNav` (client): fixed nav, scroll opacity, Sign In → `/sign-in`, Get Started → `/register`
-- `HeroSection` (server): eyebrow, gradient H1, subheadline, CTAs; renders `ChaosVisual` + `DashboardPreview` side by side
-- `ChaosVisual` (client): rAF animation with bounce + mouse-repel, ported from prototype
-- `DashboardPreview` (server): static mini app mockup — topbar, sidebar, stats, section label, card grid
-- `FeaturesSection` (server): 3-col grid of 6 feature cards
-- `AiSection` (server): Pro badge, checklist, code mockup
-- `PricingSection` (server) + `PricingToggle` (client): Free / Pro cards, yearly toggle, CTAs → `/register`
-- `CtaSection` + `HomeFooter` (server): final CTA and footer with correct links
-- `FadeIn` client wrapper: `IntersectionObserver` scroll reveal on all major sections
-
 ## Notes
-
-- Components live in `src/components/marketing/`
-- Tailwind only — no new dependencies; use ShadCN `Button`, `Badge`, `Card`, `Switch` where appropriate
-- Gradient text: `bg-gradient-to-r from-blue-400 via-blue-500 to-blue-700 bg-clip-text text-transparent`
-- Item type colours sourced from `src/lib/constants/item-types.ts`
-- Responsive: hero visual `flex-col md:flex-row`; features `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`; pricing `grid-cols-1 sm:grid-cols-2`; footer `grid-cols-2 md:grid-cols-4`
-- Pro CTA → `/register` for now (update when Stripe ships)
-- No tests needed — pure presentational UI, no server actions or data fetching
 
 ## History
 
@@ -76,3 +57,4 @@ In Progress
 - Favorites Sort - client-side sort controls (Date/Name/Type) on /favorites page; sortItems and sortCollections pure functions; monospace toggle buttons with active state; 79 tests passing
 - Pinned Items - toggleItemPin server action (5 tests); Pin button in ItemDrawer wired with optimistic state + blue active styling; pin icon static indicator on ItemCard; pin-first orderBy on /items/[type] and collection item listings; 84 tests passing
 - Homepage Mockup - static marketing prototype at prototypes/homepage/; chaos-to-order hero with rAF icon animation + mouse repel; 6 feature cards, AI/Pro section, pricing with yearly toggle, scroll fade-in, responsive layout
+- Homepage - production Next.js homepage at /; 12 components in src/components/marketing/ (4 client: HomeNav, ChaosVisual, PricingToggle, FadeIn; 8 server); chaos hero visual, features grid, AI section, pricing with yearly toggle, footer; all CTAs wired to /sign-in and /register; 84 tests passing
