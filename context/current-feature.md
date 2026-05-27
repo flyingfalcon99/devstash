@@ -2,16 +2,9 @@
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
-
-UI Fixes - Stage 3: Medium Priority Issues
-
-1. ChaosVisual: replace hardcoded `style={{ height: 200 }}` with responsive Tailwind classes (smaller on mobile)
-2. Dashboard stat cards: "Favorite Collections" uses same Star icon as "Favorite Items" — replace with Bookmark
-3. TopBar: "DevStash" text hidden below 640px — always show brand name; collapse search to icon-only on mobile to preserve layout
-4. ItemCard: copy button tap target too small (p-0.5 → p-1.5 for 24px touch area)
 
 ## Notes
 
@@ -67,3 +60,4 @@ UI Fixes - Stage 3: Medium Priority Issues
 - Homepage - production Next.js homepage at /; 12 components in src/components/marketing/ (4 client: HomeNav, ChaosVisual, PricingToggle, FadeIn; 8 server); chaos hero visual, features grid, AI section, pricing with yearly toggle, footer; all CTAs wired to /sign-in and /register; 84 tests passing
 - UI Fixes Stage 1 (Critical A11y) - ItemCard outer wrapper changed to div[role=button] to fix nested interactive element HTML violation; copy span gains tabIndex+onKeyDown for keyboard operability; SidebarUserMenu replaced with ShadCN DropdownMenu (Base UI) for full keyboard nav + Escape-to-close + role=menu; ItemDrawerContext created with singleton drawer at layout level, removing duplicate ItemDrawer from DashboardItemsClient, FavoritesList, ItemsClientWrapper, CollectionItemsDisplay
 - UI Fixes Stage 2 (High Priority) - HomeNav: hamburger + slide-down panel for Features/Pricing on mobile with aria-label/aria-expanded; FeaturesSection: copy corrected from "Seven" to "Six item types"; sign-in/register: Package icon replaced with branded DevStash SVG; TopBar: NewCollectionButton hidden below lg to prevent search bar crush at tablet widths; CollectionCard: DropdownMenuTrigger opacity-0/group-hover removed, menu always visible
+- UI Fixes Stage 3 (Medium Priority) - ChaosVisual: h-[160px] sm:h-[200px] replaces hardcoded 200px style; dashboard stat cards: Favorite Collections uses Bookmark icon instead of duplicate Star; TopBar: DevStash brand name always visible, search collapses to icon-only below sm; ItemCard: copy button tap target increased from p-0.5 to p-1.5 (24px touch area)
