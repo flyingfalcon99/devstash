@@ -2,9 +2,17 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
+
+UI Fixes - Stage 2: High Priority Issues
+
+1. Mobile nav: add hamburger + slide-down menu for Features/Pricing on small screens (home-nav.tsx)
+2. Content fix: "Seven item types" → "Six item types" (features-section.tsx)
+3. Auth logo: replace Package icon with DevStash SVG on sign-in + register pages
+4. Search bar: hide NewCollectionButton below lg to stop it crushing the search bar at tablet widths (top-bar.tsx)
+5. Collection card menu: always visible trigger (remove opacity-0/group-hover) so touch/keyboard users can access it (collection-card.tsx)
 
 ## Notes
 

@@ -55,7 +55,7 @@ export function FeaturesSection() {
             Everything you stash,<br className="hidden sm:block" /> organized your way
           </h2>
           <p className="text-muted-foreground max-w-lg mb-12">
-            Seven item types, one powerful search. Stop copying from Slack, your browser,
+            Six item types, one powerful search. Stop copying from Slack, your browser,
             and random text files — put it all here.
           </p>
         </FadeIn>

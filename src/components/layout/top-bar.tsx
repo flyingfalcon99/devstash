@@ -47,7 +47,9 @@ export function TopBar({ onOpenMobile, onOpenPalette }: TopBarProps) {
         >
           <Star className="h-4 w-4" />
         </Link>
-        <NewCollectionButton />
+        <div className="hidden lg:block">
+          <NewCollectionButton />
+        </div>
         <NewItemButton />
       </div>
     </header>
