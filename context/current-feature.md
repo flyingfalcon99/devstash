@@ -2,16 +2,9 @@
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
-
-UI Fixes - Stage 4: Low Priority Issues
-
-1. aria-hidden: footer SVG logo + hero announcement ✦ character missing aria-hidden="true"
-2. Pricing toggle: Switch has no associated label for screen readers — add aria-label
-3. Auth pages: no back-to-homepage link on sign-in or register — add "← Back to home"
-4. Register form: no password rules hint — add "Must be at least 8 characters" below the field
 
 ## Notes
 
@@ -68,3 +61,4 @@ UI Fixes - Stage 4: Low Priority Issues
 - UI Fixes Stage 1 (Critical A11y) - ItemCard outer wrapper changed to div[role=button] to fix nested interactive element HTML violation; copy span gains tabIndex+onKeyDown for keyboard operability; SidebarUserMenu replaced with ShadCN DropdownMenu (Base UI) for full keyboard nav + Escape-to-close + role=menu; ItemDrawerContext created with singleton drawer at layout level, removing duplicate ItemDrawer from DashboardItemsClient, FavoritesList, ItemsClientWrapper, CollectionItemsDisplay
 - UI Fixes Stage 2 (High Priority) - HomeNav: hamburger + slide-down panel for Features/Pricing on mobile with aria-label/aria-expanded; FeaturesSection: copy corrected from "Seven" to "Six item types"; sign-in/register: Package icon replaced with branded DevStash SVG; TopBar: NewCollectionButton hidden below lg to prevent search bar crush at tablet widths; CollectionCard: DropdownMenuTrigger opacity-0/group-hover removed, menu always visible
 - UI Fixes Stage 3 (Medium Priority) - ChaosVisual: h-[160px] sm:h-[200px] replaces hardcoded 200px style; dashboard stat cards: Favorite Collections uses Bookmark icon instead of duplicate Star; TopBar: DevStash brand name always visible, search collapses to icon-only below sm; ItemCard: copy button tap target increased from p-0.5 to p-1.5 (24px touch area)
+- UI Fixes Stage 4 (Low Priority / A11y) - HomeFooter SVG: aria-hidden="true" added; HeroSection ✦ glyph: wrapped in aria-hidden span; PricingToggle Switch: aria-label="Toggle billing period" added; sign-in + register: "← Back to home" link added at top; register: "Must be at least 8 characters." hint added below password field
