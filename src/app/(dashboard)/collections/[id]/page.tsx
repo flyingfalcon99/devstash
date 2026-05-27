@@ -1,23 +1,30 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { getCollectionWithItems } from "@/lib/db/collections";
+import { getCollectionById, getCollectionItemsPaginated } from "@/lib/db/collections";
 import { CollectionItemsDisplay } from "@/components/features/items/collection-items-display";
 import { CollectionDetailActions } from "@/components/features/collections/collection-detail-actions";
+import { PaginationControls } from "@/components/ui/pagination";
+import { ITEMS_PER_PAGE } from "@/lib/constants/pagination";
 import { Folder, Star } from "lucide-react";
 
 export default async function CollectionDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const { id } = await params;
-  const collection = await getCollectionWithItems(id, session.user.id);
+  const [{ id }, { page: pageParam }] = await Promise.all([params, searchParams]);
+
+  const collection = await getCollectionById(id, session.user.id);
   if (!collection) notFound();
 
-  const items = collection.items.map(({ item }) => item);
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+  const { items, total } = await getCollectionItemsPaginated(id, page, ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
 
   return (
     <div className="space-y-6">
@@ -42,13 +49,16 @@ export default async function CollectionDetailPage({
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {items.length} {items.length === 1 ? "item" : "items"}
+        {total} {total === 1 ? "item" : "items"}
       </p>
 
-      {items.length === 0 ? (
+      {total === 0 ? (
         <p className="text-sm text-muted-foreground">No items in this collection yet.</p>
       ) : (
-        <CollectionItemsDisplay items={items} />
+        <>
+          <CollectionItemsDisplay items={items} />
+          <PaginationControls page={page} totalPages={totalPages} />
+        </>
       )}
     </div>
   );

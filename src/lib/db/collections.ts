@@ -26,7 +26,7 @@ export async function getDashboardStats(userId: string) {
   }
 }
 
-export async function getRecentCollections(userId: string, limit = 6) {
+export async function getRecentCollections(userId: string, limit: number) {
   try {
     return await prisma.collection.findMany({
       where: { userId },
@@ -75,6 +75,36 @@ export async function getAllCollections(userId: string) {
   }
 }
 
+export async function getCollectionsPaginated(userId: string, page: number, pageSize: number) {
+  const where = { userId };
+  const include = {
+    items: {
+      include: {
+        item: {
+          select: {
+            itemType: { select: { name: true, icon: true, color: true } },
+          },
+        },
+      },
+    },
+  };
+  try {
+    const [collections, total] = await Promise.all([
+      prisma.collection.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        include,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.collection.count({ where }),
+    ]);
+    return { collections, total };
+  } catch (err) {
+    throw new Error(`Failed to fetch collections: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export async function getCollectionWithItems(id: string, userId: string) {
   try {
     return await prisma.collection.findFirst({
@@ -92,6 +122,39 @@ export async function getCollectionWithItems(id: string, userId: string) {
     });
   } catch (err) {
     throw new Error(`Failed to fetch collection: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+export async function getCollectionById(id: string, userId: string) {
+  try {
+    return await prisma.collection.findFirst({
+      where: { id, userId },
+      select: { id: true, name: true, description: true, isFavorite: true },
+    });
+  } catch (err) {
+    throw new Error(`Failed to fetch collection: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+export async function getCollectionItemsPaginated(
+  collectionId: string,
+  page: number,
+  pageSize: number
+) {
+  try {
+    const [connections, total] = await Promise.all([
+      prisma.itemCollection.findMany({
+        where: { collectionId },
+        include: { item: { include: { itemType: true } } },
+        orderBy: { item: { createdAt: 'desc' } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.itemCollection.count({ where: { collectionId } }),
+    ]);
+    return { items: connections.map((c) => c.item), total };
+  } catch (err) {
+    throw new Error(`Failed to fetch collection items: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 

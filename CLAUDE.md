@@ -32,8 +32,7 @@ dev-stash/
 │   │   ├── item-types-spec.md
 │   │   ├── items-spec.md
 │   │   └── collections-spec.md
-│   ├── current-feature.md    # Tracks current feature in development
-│   └── mock-data.ts          # Mock data for development
+│   └── current-feature.md    # Tracks current feature in development
 │
 ├── db/                       # Database schemas and migrations
 ├── lib/                      # Utility functions and helpers

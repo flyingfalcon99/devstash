@@ -28,7 +28,7 @@ export function ItemDrawer({ itemId, onClose }: ItemDrawerProps) {
       const data = res.ok ? await res.json() : null;
       if (data) setItem(data);
     } catch (e) {
-      if ((e as Error).name !== "AbortError") console.error(e);
+      if ((e as Error).name === "AbortError") return;
     } finally {
       setLoading(false);
     }
