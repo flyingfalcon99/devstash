@@ -12,7 +12,7 @@ export function HeroSection() {
 
         <FadeIn>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border text-xs text-muted-foreground mb-6">
-            ✦ <span className="text-blue-400 font-semibold">New</span> AI-powered tagging now in Pro
+            <span aria-hidden="true">✦</span> <span className="text-blue-400 font-semibold">New</span> AI-powered tagging now in Pro
           </div>
         </FadeIn>
 

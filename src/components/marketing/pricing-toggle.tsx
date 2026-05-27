@@ -33,7 +33,7 @@ export function PricingToggle() {
       {/* Toggle */}
       <div className="flex items-center gap-3 text-sm text-muted-foreground">
         <span>Monthly</span>
-        <Switch checked={yearly} onCheckedChange={setYearly} />
+        <Switch checked={yearly} onCheckedChange={setYearly} aria-label="Toggle billing period" />
         <span className="flex items-center gap-2">
           Yearly
           <Badge variant="secondary" className="text-green-500 bg-green-500/10 text-[10px] px-1.5">

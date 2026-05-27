@@ -2,9 +2,16 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
+
+UI Fixes - Stage 4: Low Priority Issues
+
+1. aria-hidden: footer SVG logo + hero announcement ✦ character missing aria-hidden="true"
+2. Pricing toggle: Switch has no associated label for screen readers — add aria-label
+3. Auth pages: no back-to-homepage link on sign-in or register — add "← Back to home"
+4. Register form: no password rules hint — add "Must be at least 8 characters" below the field
 
 ## Notes
 

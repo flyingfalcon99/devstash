@@ -56,6 +56,9 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm space-y-6">
+        <Link href="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+          ← Back to home
+        </Link>
         <div className="flex flex-col items-center gap-2">
           <svg width="36" height="36" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <rect width="28" height="28" rx="7" fill="#3b82f6" />
@@ -105,6 +108,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
             />
+            <p className="text-xs text-muted-foreground">Must be at least 8 characters.</p>
           </div>
           <div className="space-y-2">
             <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm password</label>

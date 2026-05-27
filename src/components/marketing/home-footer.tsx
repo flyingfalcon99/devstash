@@ -47,7 +47,7 @@ export function HomeFooter() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 font-bold text-base mb-3">
-              <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+              <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <rect width="28" height="28" rx="7" fill="#3b82f6" />
                 <path d="M7 10h14M7 14h10M7 18h12" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
               </svg>
