@@ -52,7 +52,7 @@ export function FeaturesSection() {
         <FadeIn>
           <p className="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-3">Features</p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Everything you stash,<br className="hidden sm:block" /> organized your way
+            Everything in your nest,<br className="hidden sm:block" /> organized your way
           </h2>
           <p className="text-muted-foreground max-w-lg mb-12">
             Six item types, one powerful search. Stop copying from Slack, your browser,

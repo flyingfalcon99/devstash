@@ -9,11 +9,11 @@ export async function sendVerificationEmail(email: string, token: string) {
   const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
   const { error } = await resend.emails.send({
-    from: "DevStash <onboarding@resend.dev>",
+    from: "DevNest <onboarding@resend.dev>",
     to: email,
-    subject: "Verify your DevStash email",
+    subject: "Verify your DevNest email",
     html: `
-      <p>Thanks for signing up for DevStash!</p>
+      <p>Thanks for signing up for DevNest!</p>
       <p>Click the link below to verify your email address. This link expires in 24 hours.</p>
       <p><a href="${verifyUrl}">Verify my email</a></p>
       <p>If you didn't create an account, you can safely ignore this email.</p>
@@ -30,11 +30,11 @@ export async function sendPasswordResetEmail(email: string, token: string) {
   const resetUrl = `${baseUrl}/reset-password?token=${token}`
 
   const { error } = await resend.emails.send({
-    from: "DevStash <onboarding@resend.dev>",
+    from: "DevNest <onboarding@resend.dev>",
     to: email,
-    subject: "Reset your DevStash password",
+    subject: "Reset your DevNest password",
     html: `
-      <p>You requested a password reset for your DevStash account.</p>
+      <p>You requested a password reset for your DevNest account.</p>
       <p>Click the link below to set a new password. This link expires in 1 hour.</p>
       <p><a href="${resetUrl}">Reset my password</a></p>
       <p>If you didn't request this, you can safely ignore this email.</p>

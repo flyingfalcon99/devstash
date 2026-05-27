@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { prisma } from '../src/lib/prisma';
 
-const DEMO_EMAIL = 'demo@devstash.io';
+const DEMO_EMAIL = 'demo@devnest.io';
 
 async function main() {
   const demo = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });

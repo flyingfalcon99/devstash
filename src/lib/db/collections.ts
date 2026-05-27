@@ -4,7 +4,7 @@ import { prisma } from '../prisma';
 export const getDemoUser = cache(async () => {
   try {
     return await prisma.user.findFirst({
-      where: { email: 'demo@devstash.io' }
+      where: { email: 'demo@devnest.io' }
     });
   } catch (err) {
     throw new Error(`Failed to fetch demo user: ${err instanceof Error ? err.message : String(err)}`);

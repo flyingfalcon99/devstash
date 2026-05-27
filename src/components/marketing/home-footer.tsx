@@ -49,9 +49,11 @@ export function HomeFooter() {
             <Link href="/" className="flex items-center gap-2 font-bold text-base mb-3">
               <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <rect width="28" height="28" rx="7" fill="#3b82f6" />
-                <path d="M7 10h14M7 14h10M7 18h12" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                <path d="M10 10 Q14 7 18 10" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                <path d="M7 14 Q14 10 21 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                <path d="M5 19 Q14 13 23 19" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              DevStash
+              DevNest
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-[160px]">
               Your developer knowledge hub. Organized, searchable, always accessible.
@@ -81,7 +83,7 @@ export function HomeFooter() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} DevStash. All rights reserved.
+          © {new Date().getFullYear()} DevNest. All rights reserved.
         </p>
       </div>
     </footer>

@@ -18,7 +18,7 @@ export function AiSection() {
             Pro Feature
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            AI that understands your stash
+            AI that understands your nest
           </h2>
           <p className="text-muted-foreground mb-6">
             Upgrade to Pro and let AI do the housekeeping — so you can focus on building.

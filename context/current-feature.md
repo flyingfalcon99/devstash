@@ -2,11 +2,21 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+Rebrand: DevStash → DevNest
+
+- New SVG logo: three concentric nest arcs replacing horizontal-line document icon
+- All user-visible "DevStash" text → "DevNest" across UI, emails, and demo seed data
+- Demo user email: demo@devstash.io → demo@devnest.io
+- OG metadata added to layout.tsx
+- Favicon: src/app/icon.svg with DevNest SVG mark
+
 ## Notes
+
+Spec: context/features/rebrand-devnest-spec.md
 
 ## History
 

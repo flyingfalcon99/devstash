@@ -32,9 +32,11 @@ export function HomeNav() {
         <Link href="/" className="flex items-center gap-2 font-bold text-lg">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <rect width="28" height="28" rx="7" fill="#3b82f6" />
-            <path d="M7 10h14M7 14h10M7 18h12" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10 10 Q14 7 18 10" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M7 14 Q14 10 21 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M5 19 Q14 13 23 19" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          DevStash
+          DevNest
         </Link>
 
         <ul className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">

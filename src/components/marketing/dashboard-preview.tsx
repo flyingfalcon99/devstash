@@ -13,7 +13,7 @@ export function DashboardPreview() {
   return (
     <div className="flex-1 rounded-xl border border-border bg-card overflow-hidden min-w-0">
       <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground px-3 pt-3 pb-1">
-        ...with DevStash
+        ...with DevNest
       </p>
 
       {/* Mini top bar */}

@@ -74,9 +74,11 @@ export default function SignInPage() {
         <div className="flex flex-col items-center gap-2">
           <svg width="36" height="36" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <rect width="28" height="28" rx="7" fill="#3b82f6" />
-            <path d="M7 10h14M7 14h10M7 18h12" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10 10 Q14 7 18 10" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M7 14 Q14 10 21 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M5 19 Q14 13 23 19" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          <h1 className="text-2xl font-semibold tracking-tight">Sign in to DevStash</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Sign in to DevNest</h1>
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link href="/register" className="text-primary underline-offset-4 hover:underline">

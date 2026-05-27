@@ -155,9 +155,9 @@ export const items = [
   },
   {
     id: "item_6",
-    title: "DevStash project context",
+    title: "DevNest project context",
     contentType: "TEXT" as const,
-    content: "DevStash is a unified hub for developer knowledge & resources...",
+    content: "DevNest is a unified hub for developer knowledge & resources...",
     description: "Main project context file for AI assistants",
     language: null,
     isFavorite: true,

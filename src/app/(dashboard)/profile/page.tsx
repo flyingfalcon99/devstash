@@ -97,7 +97,7 @@ export default async function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Usage Statistics</CardTitle>
-          <CardDescription>Your DevStash at a glance.</CardDescription>
+          <CardDescription>Your DevNest at a glance.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid grid-cols-2 gap-4">

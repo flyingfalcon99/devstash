@@ -14,8 +14,14 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "DevStash",
-  description: "Your developer knowledge hub",
+  title: "DevNest",
+  description: "Your developer knowledge hub — organize snippets, prompts, commands, notes, and more.",
+  openGraph: {
+    title: "DevNest",
+    description: "Your developer knowledge hub — organize snippets, prompts, commands, notes, and more.",
+    siteName: "DevNest",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

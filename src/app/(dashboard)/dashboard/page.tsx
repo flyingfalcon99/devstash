@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here's an overview of your DevStash.</p>
+        <p className="text-muted-foreground">Welcome back! Here's an overview of your DevNest.</p>
       </div>
 
       {/* Stats Cards */}
