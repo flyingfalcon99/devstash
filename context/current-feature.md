@@ -1,26 +1,16 @@
-# Current Feature: Global Search / Command Palette
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Open with Cmd+K (Mac) / Ctrl+K (Windows)
-- Fuzzy search across all items and collections
-- Grouped results: Items section, Collections section
-- Keyboard navigation (arrow keys, Enter to select)
-- Show item type icon and collection item count
-- Navigate to item drawer or collection page on select
-- TopBar search input opens palette on click
-- Show ⌘K hint in search input placeholder
+<!-- Add goals here -->
 
 ## Notes
 
-- Use ShadCN `cmdk` component (Command)
-- Client-side fuzzy search — no server round-trips on each keystroke
-- Pre-fetch searchable data on app load (items: id, title, type, content preview; collections: id, name, itemCount)
-- Reuse existing data fetching functions
+<!-- Add notes here -->
 
 ## History
 
@@ -62,3 +52,4 @@ In Progress
 - Collections Pages & Collection Create - /collections listing page; /collections/[id] detail page with ItemsClientWrapper; createCollection server action (Zod, auth-scoped, 6 tests); NewCollectionButton dialog in top bar; toast + router.refresh(); 404 + empty states; ItemDrawer refactored into sub-components
 - Item-to-Collection Assignment - CollectionPicker checkbox component; multi-select in New Item dialog and Edit Item drawer; createItem/updateItem/createFileItem accept collectionIds; GET /api/collections route; ItemCollection join rows managed atomically; 39 tests passing
 - Collection Management Actions - Edit/Delete/Favorite(UI) on /collections/[id] header; CollectionCard with 3-dot DropdownMenu on listing and dashboard; updateCollection + deleteCollection server actions; delete cascades join rows only; 51 tests passing
+- Global Search / Command Palette - Cmd+K / Ctrl+K shortcut; TopBar trigger with ⌘K badge; cmdk Command palette with substring filter; items + collections grouped results with type icons; item select opens layout-level drawer, collection select navigates; getSearchData pre-fetched at layout load; 56 tests passing
