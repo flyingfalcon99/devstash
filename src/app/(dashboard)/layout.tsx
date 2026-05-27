@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { DashboardLayoutClient } from "@/components/layout/dashboard-layout-client";
 import { getSidebarCollections } from "@/lib/db/collections";
 import { getSidebarItemTypes } from "@/lib/db/items";
+import { getSearchData } from "@/lib/db/search";
 
 export default async function DashboardLayout({
   children,
@@ -15,8 +16,11 @@ export default async function DashboardLayout({
   const { user } = session;
   const userId = user.id!;
 
-  const itemTypes = await getSidebarItemTypes(userId);
-  const { favorites, recents } = await getSidebarCollections(userId);
+  const [itemTypes, { favorites, recents }, searchData] = await Promise.all([
+    getSidebarItemTypes(userId),
+    getSidebarCollections(userId),
+    getSearchData(userId),
+  ]);
 
   const sidebarProps = {
     user: {
@@ -29,5 +33,9 @@ export default async function DashboardLayout({
     recentCollections: recents,
   };
 
-  return <DashboardLayoutClient sidebarProps={sidebarProps}>{children}</DashboardLayoutClient>;
+  return (
+    <DashboardLayoutClient sidebarProps={sidebarProps} searchData={searchData}>
+      {children}
+    </DashboardLayoutClient>
+  );
 }

@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { Search, Menu, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NewItemButton } from "@/components/features/items/new-item-button";
 import { NewCollectionButton } from "@/components/features/collections/new-collection-button";
 
-export function TopBar({ onOpenMobile }: { onOpenMobile?: () => void }) {
+interface TopBarProps {
+  onOpenMobile?: () => void;
+  onOpenPalette?: () => void;
+}
+
+export function TopBar({ onOpenMobile, onOpenPalette }: TopBarProps) {
   return (
     <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-3 shrink-0">
       <div className="flex items-center gap-2">
@@ -21,13 +25,17 @@ export function TopBar({ onOpenMobile }: { onOpenMobile?: () => void }) {
       </div>
 
       <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search items..."
-            className="pl-9 bg-muted/40 border-border"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={onOpenPalette}
+          className="relative flex w-full items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground hover:bg-muted/60 transition-colors"
+        >
+          <Search className="h-4 w-4 shrink-0" />
+          <span className="flex-1 text-left">Search items and collections…</span>
+          <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-0.5 text-xs font-mono text-muted-foreground">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </button>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
