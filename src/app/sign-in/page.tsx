@@ -7,6 +7,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { HomeNav } from "@/components/homepage/home-nav";
 
 function SearchParamsHandler() {
   const searchParams = useSearchParams();
@@ -62,15 +63,14 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen bg-background pt-16">
+      <HomeNav />
       <Suspense>
         <SearchParamsHandler />
       </Suspense>
 
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
       <div className="w-full max-w-sm space-y-6">
-        <Link href="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-          ← Back to home
-        </Link>
         <div className="flex flex-col items-center gap-2">
           <svg width="36" height="36" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <rect width="28" height="28" rx="7" fill="#3b82f6" />
@@ -148,6 +148,7 @@ export default function SignInPage() {
         >
           Sign in with GitHub
         </Button>
+      </div>
       </div>
     </div>
   );
