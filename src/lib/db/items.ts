@@ -238,7 +238,7 @@ export async function getItemsByType(
     const [items, total] = await Promise.all([
       prisma.item.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
         include: { itemType: true },
         skip: (page - 1) * pageSize,
         take: pageSize,

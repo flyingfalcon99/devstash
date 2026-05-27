@@ -93,6 +93,21 @@ export async function createItem(rawData: CreateItemInput) {
   }
 }
 
+export async function toggleItemPin(itemId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false as const, error: "Unauthorized" };
+
+  try {
+    const existing = await prisma.item.findFirst({ where: { id: itemId, userId: session.user.id } });
+    if (!existing) return { success: false as const, error: "Item not found" };
+
+    await prisma.item.update({ where: { id: itemId }, data: { isPinned: !existing.isPinned } });
+    return { success: true as const, isPinned: !existing.isPinned };
+  } catch {
+    return { success: false as const, error: "Failed to update pin" };
+  }
+}
+
 export async function toggleItemFavorite(itemId: string) {
   const session = await auth();
   if (!session?.user?.id) return { success: false as const, error: "Unauthorized" };

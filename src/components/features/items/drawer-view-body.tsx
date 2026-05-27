@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
 import { cn, formatBytes } from "@/lib/utils";
-import { deleteItem, toggleItemFavorite } from "@/actions/items";
+import { deleteItem, toggleItemFavorite, toggleItemPin } from "@/actions/items";
 import { ItemContentField } from "./item-content-field";
 import {
   AlertDialog,
@@ -35,6 +35,8 @@ export function DrawerViewBody({ item, onEdit, onClose }: DrawerViewBodyProps) {
   const color = item.itemType.color;
   const [isFavorite, setIsFavorite] = useState(item.isFavorite);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
+  const [isPinned, setIsPinned] = useState(item.isPinned);
+  const [togglingPin, setTogglingPin] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -49,6 +51,19 @@ export function DrawerViewBody({ item, onEdit, onClose }: DrawerViewBodyProps) {
       toast.error(result.error ?? "Failed to update favorite");
     }
     setTogglingFavorite(false);
+  }
+
+  async function handleTogglePin() {
+    setTogglingPin(true);
+    setIsPinned((prev) => !prev);
+    const result = await toggleItemPin(item.id);
+    if (result.success) {
+      router.refresh();
+    } else {
+      setIsPinned((prev) => !prev);
+      toast.error(result.error ?? "Failed to update pin");
+    }
+    setTogglingPin(false);
   }
 
   async function handleDelete() {
@@ -95,9 +110,15 @@ export function DrawerViewBody({ item, onEdit, onClose }: DrawerViewBodyProps) {
           <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-yellow-400 text-yellow-400")} />
           {isFavorite ? "Favorited" : "Favorite"}
         </Button>
-        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5">
-          <Pin className="h-3.5 w-3.5" />
-          Pin
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn("h-7 px-2 text-xs gap-1.5", isPinned && "text-blue-500")}
+          onClick={handleTogglePin}
+          disabled={togglingPin}
+        >
+          <Pin className={cn("h-3.5 w-3.5", isPinned && "fill-blue-400 text-blue-400")} />
+          {isPinned ? "Pinned" : "Pin"}
         </Button>
         <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5">
           <Copy className="h-3.5 w-3.5" />

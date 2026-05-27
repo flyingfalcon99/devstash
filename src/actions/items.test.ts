@@ -13,7 +13,7 @@ vi.mock("@/lib/prisma", () => ({
 }));
 vi.mock("@/lib/r2", () => ({ deleteFromR2: vi.fn() }));
 
-import { deleteItem, updateItem, createItem, toggleItemFavorite } from "./items";
+import { deleteItem, updateItem, createItem, toggleItemFavorite, toggleItemPin } from "./items";
 import { auth } from "@/auth";
 import { deleteItemById, updateItemById, createItemInDb, getItemFileUrl } from "@/lib/db/items";
 import { prisma } from "@/lib/prisma";
@@ -318,6 +318,69 @@ describe("toggleItemFavorite", () => {
     mockItemUpdate.mockResolvedValue({} as never);
 
     await toggleItemFavorite("item-1");
+
+    expect(mockItemFindFirst).toHaveBeenCalledWith({
+      where: { id: "item-1", userId: "user-42" },
+    });
+  });
+});
+
+// ─── toggleItemPin ────────────────────────────────────────────────────────────
+
+describe("toggleItemPin", () => {
+  it("returns error when not authenticated", async () => {
+    mockAuth.mockResolvedValue(null as never);
+
+    const result = await toggleItemPin("item-1");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Unauthorized");
+    expect(mockItemFindFirst).not.toHaveBeenCalled();
+  });
+
+  it("returns error when item not found", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue(null);
+
+    const result = await toggleItemPin("missing");
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Item not found");
+    expect(mockItemUpdate).not.toHaveBeenCalled();
+  });
+
+  it("flips isPinned from false to true", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isPinned: false } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleItemPin("item-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isPinned).toBe(true);
+    expect(mockItemUpdate).toHaveBeenCalledWith({
+      where: { id: "item-1" },
+      data: { isPinned: true },
+    });
+  });
+
+  it("flips isPinned from true to false", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-1" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isPinned: true } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    const result = await toggleItemPin("item-1");
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.isPinned).toBe(false);
+  });
+
+  it("scopes ownership check to authenticated user", async () => {
+    mockAuth.mockResolvedValue({ user: { id: "user-42" } } as never);
+    mockItemFindFirst.mockResolvedValue({ id: "item-1", isPinned: false } as never);
+    mockItemUpdate.mockResolvedValue({} as never);
+
+    await toggleItemPin("item-1");
 
     expect(mockItemFindFirst).toHaveBeenCalledWith({
       where: { id: "item-1", userId: "user-42" },
