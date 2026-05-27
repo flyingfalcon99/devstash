@@ -2,17 +2,9 @@
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
-
-UI Fixes - Stage 2: High Priority Issues
-
-1. Mobile nav: add hamburger + slide-down menu for Features/Pricing on small screens (home-nav.tsx)
-2. Content fix: "Seven item types" → "Six item types" (features-section.tsx)
-3. Auth logo: replace Package icon with DevStash SVG on sign-in + register pages
-4. Search bar: hide NewCollectionButton below lg to stop it crushing the search bar at tablet widths (top-bar.tsx)
-5. Collection card menu: always visible trigger (remove opacity-0/group-hover) so touch/keyboard users can access it (collection-card.tsx)
 
 ## Notes
 
@@ -67,3 +59,4 @@ UI Fixes - Stage 2: High Priority Issues
 - Homepage Mockup - static marketing prototype at prototypes/homepage/; chaos-to-order hero with rAF icon animation + mouse repel; 6 feature cards, AI/Pro section, pricing with yearly toggle, scroll fade-in, responsive layout
 - Homepage - production Next.js homepage at /; 12 components in src/components/marketing/ (4 client: HomeNav, ChaosVisual, PricingToggle, FadeIn; 8 server); chaos hero visual, features grid, AI section, pricing with yearly toggle, footer; all CTAs wired to /sign-in and /register; 84 tests passing
 - UI Fixes Stage 1 (Critical A11y) - ItemCard outer wrapper changed to div[role=button] to fix nested interactive element HTML violation; copy span gains tabIndex+onKeyDown for keyboard operability; SidebarUserMenu replaced with ShadCN DropdownMenu (Base UI) for full keyboard nav + Escape-to-close + role=menu; ItemDrawerContext created with singleton drawer at layout level, removing duplicate ItemDrawer from DashboardItemsClient, FavoritesList, ItemsClientWrapper, CollectionItemsDisplay
+- UI Fixes Stage 2 (High Priority) - HomeNav: hamburger + slide-down panel for Features/Pricing on mobile with aria-label/aria-expanded; FeaturesSection: copy corrected from "Seven" to "Six item types"; sign-in/register: Package icon replaced with branded DevStash SVG; TopBar: NewCollectionButton hidden below lg to prevent search bar crush at tablet widths; CollectionCard: DropdownMenuTrigger opacity-0/group-hover removed, menu always visible
