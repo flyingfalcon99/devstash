@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ChangePasswordForm } from "@/components/features/profile/change-password-form";
-import { DeleteAccountButton } from "@/components/features/profile/delete-account-button";
+import { ChangePasswordForm } from "@/components/features/settings/change-password-form";
+import { DeleteAccountButton } from "@/components/features/settings/delete-account-button";
+import { EditorPreferencesForm } from "@/components/features/settings/editor-preferences-form";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -24,6 +25,16 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Manage your account settings.</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Editor Preferences</CardTitle>
+          <CardDescription>Customize your code editor appearance and behavior.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <EditorPreferencesForm />
+        </CardContent>
+      </Card>
 
       {isCredentialsUser && (
         <Card>

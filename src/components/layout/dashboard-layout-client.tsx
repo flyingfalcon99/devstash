@@ -5,15 +5,18 @@ import { Sidebar, SidebarData } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { CommandPalette } from "@/components/features/search/command-palette";
 import { ItemDrawer } from "@/components/features/items/item-drawer";
+import { EditorPreferencesProvider } from "@/context/editor-preferences-context";
 import type { SearchData } from "@/lib/db/search";
+import type { EditorPreferences } from "@/lib/editor-preferences";
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
   sidebarProps: SidebarData;
   searchData: SearchData;
+  editorPreferences: EditorPreferences;
 }
 
-export function DashboardLayoutClient({ children, sidebarProps, searchData }: DashboardLayoutClientProps) {
+export function DashboardLayoutClient({ children, sidebarProps, searchData, editorPreferences }: DashboardLayoutClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -32,6 +35,7 @@ export function DashboardLayoutClient({ children, sidebarProps, searchData }: Da
   }, []);
 
   return (
+    <EditorPreferencesProvider initialPrefs={editorPreferences}>
     <div className="flex flex-col h-screen overflow-hidden">
       <TopBar onOpenMobile={() => setMobileOpen(true)} onOpenPalette={openPalette} />
       <div className="flex flex-1 overflow-hidden">
@@ -56,5 +60,6 @@ export function DashboardLayoutClient({ children, sidebarProps, searchData }: Da
         onClose={() => setSelectedItemId(null)}
       />
     </div>
+    </EditorPreferencesProvider>
   );
 }

@@ -11,17 +11,20 @@ export function DeleteAccountButton() {
 
   async function handleDelete() {
     setLoading(true);
-    const res = await fetch("/api/profile", { method: "DELETE" });
+    try {
+      const res = await fetch("/api/profile", { method: "DELETE" });
 
-    if (!res.ok) {
-      const data = await res.json();
-      toast.error(data.error ?? "Failed to delete account.");
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error ?? "Failed to delete account.");
+        setConfirming(false);
+        return;
+      }
+
+      await signOut({ callbackUrl: "/sign-in" });
+    } finally {
       setLoading(false);
-      setConfirming(false);
-      return;
     }
-
-    await signOut({ callbackUrl: "/sign-in" });
   }
 
   if (confirming) {
