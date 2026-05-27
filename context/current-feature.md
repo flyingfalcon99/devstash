@@ -1,12 +1,31 @@
-# Current Feature
+# Current Feature: Homepage
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+- `src/app/page.tsx` root route — public, no auth required
+- `HomeNav` (client): fixed nav, scroll opacity, Sign In → `/sign-in`, Get Started → `/register`
+- `HeroSection` (server): eyebrow, gradient H1, subheadline, CTAs; renders `ChaosVisual` + `DashboardPreview` side by side
+- `ChaosVisual` (client): rAF animation with bounce + mouse-repel, ported from prototype
+- `DashboardPreview` (server): static mini app mockup — topbar, sidebar, stats, section label, card grid
+- `FeaturesSection` (server): 3-col grid of 6 feature cards
+- `AiSection` (server): Pro badge, checklist, code mockup
+- `PricingSection` (server) + `PricingToggle` (client): Free / Pro cards, yearly toggle, CTAs → `/register`
+- `CtaSection` + `HomeFooter` (server): final CTA and footer with correct links
+- `FadeIn` client wrapper: `IntersectionObserver` scroll reveal on all major sections
+
 ## Notes
+
+- Components live in `src/components/marketing/`
+- Tailwind only — no new dependencies; use ShadCN `Button`, `Badge`, `Card`, `Switch` where appropriate
+- Gradient text: `bg-gradient-to-r from-blue-400 via-blue-500 to-blue-700 bg-clip-text text-transparent`
+- Item type colours sourced from `src/lib/constants/item-types.ts`
+- Responsive: hero visual `flex-col md:flex-row`; features `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`; pricing `grid-cols-1 sm:grid-cols-2`; footer `grid-cols-2 md:grid-cols-4`
+- Pro CTA → `/register` for now (update when Stripe ships)
+- No tests needed — pure presentational UI, no server actions or data fetching
 
 ## History
 
