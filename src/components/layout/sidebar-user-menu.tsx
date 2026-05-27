@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Settings, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface SidebarUserMenuProps {
   user: { name: string; email: string; image?: string | null };
@@ -15,54 +21,13 @@ interface SidebarUserMenuProps {
 }
 
 export function SidebarUserMenu({ user, isCollapsed, initials }: SidebarUserMenuProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleOutsideClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
-
   return (
     <div className="border-t border-border p-3 shrink-0">
-      <div ref={dropdownRef} className="relative">
-        {dropdownOpen && (
-          <div className="absolute bottom-full left-0 right-0 mb-1 rounded-md border border-border bg-background shadow-md py-1 z-50">
-            <Link
-              href="/profile"
-              onClick={() => setDropdownOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-            >
-              <User className="h-4 w-4 shrink-0" />
-              Profile
-            </Link>
-            <Link
-              href="/settings"
-              onClick={() => setDropdownOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-            >
-              <Settings className="h-4 w-4 shrink-0" />
-              Settings
-            </Link>
-            <button
-              onClick={() => signOut({ callbackUrl: "/sign-in" })}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-muted/50 transition-colors"
-            >
-              <LogOut className="h-4 w-4 shrink-0" />
-              Sign out
-            </button>
-          </div>
-        )}
-
-        <button
-          onClick={() => setDropdownOpen(!dropdownOpen)}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          aria-label="User menu"
           className={cn(
-            "flex items-center w-full rounded-md hover:bg-muted/50 transition-colors p-1",
+            "flex items-center w-full rounded-md hover:bg-muted/50 transition-colors p-1 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
             isCollapsed ? "justify-center" : "gap-2"
           )}
         >
@@ -85,8 +50,27 @@ export function SidebarUserMenu({ user, isCollapsed, initials }: SidebarUserMenu
               <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           )}
-        </button>
-      </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top" align="start" className="w-48">
+          <DropdownMenuItem render={<Link href="/profile" />} className="flex items-center gap-2 cursor-pointer">
+            <User className="h-4 w-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/settings" />} className="flex items-center gap-2 cursor-pointer">
+            <Settings className="h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => signOut({ callbackUrl: "/sign-in" })}
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

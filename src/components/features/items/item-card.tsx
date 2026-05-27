@@ -37,7 +37,7 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
   const color = item.itemType.color;
   const copyValue = item.content ?? item.url;
 
-  function handleCopy(e: React.MouseEvent) {
+  function handleCopy(e: React.MouseEvent | React.KeyboardEvent) {
     e.stopPropagation();
     if (!copyValue) return;
     navigator.clipboard.writeText(copyValue).then(() => {
@@ -46,11 +46,27 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
     });
   }
 
+  function handleCopyKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCopy(e);
+    }
+  }
+
+  function handleCardKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen?.(item.id);
+    }
+  }
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onOpen?.(item.id)}
-      className="w-full text-left block"
+      onKeyDown={handleCardKeyDown}
+      className="w-full text-left block cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
     >
       <Card
         className="hover:bg-muted/50 transition-colors shadow-sm h-full flex flex-col"
@@ -66,8 +82,10 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
               {copyValue && (
                 <span
                   role="button"
+                  tabIndex={0}
                   onClick={handleCopy}
-                  className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors"
+                  onKeyDown={handleCopyKeyDown}
+                  className="p-0.5 rounded text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
                   aria-label="Copy"
                 >
                   {copied
@@ -109,6 +127,6 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
           </div>
         </CardContent>
       </Card>
-    </button>
+    </div>
   );
 }

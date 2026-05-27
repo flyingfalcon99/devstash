@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Star, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { itemTypeIconMap } from "@/lib/constants/item-types";
-import { ItemDrawer } from "@/components/features/items/item-drawer";
+import { useItemDrawer } from "@/context/item-drawer-context";
 
 interface FavoriteItem {
   id: string;
@@ -58,7 +58,7 @@ function formatDate(date: Date) {
 }
 
 export function FavoritesList({ items, collections }: FavoritesListProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { openItem } = useItemDrawer();
   const [sort, setSort] = useState<SortKey>("date");
 
   const isEmpty = items.length === 0 && collections.length === 0;
@@ -117,7 +117,7 @@ export function FavoritesList({ items, collections }: FavoritesListProps) {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => openItem(item.id)}
                     className="w-full flex items-center gap-3 px-2 py-2 text-left hover:bg-muted/50 transition-colors group"
                   >
                     <span className="shrink-0" style={{ color: item.itemType.color }}>
@@ -170,7 +170,6 @@ export function FavoritesList({ items, collections }: FavoritesListProps) {
         )}
       </div>
 
-      <ItemDrawer itemId={selectedId} onClose={() => setSelectedId(null)} />
     </>
   );
 }

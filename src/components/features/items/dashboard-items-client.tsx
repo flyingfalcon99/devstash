@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ItemCard, type ItemCardItem } from "./item-card";
-import { ItemDrawer } from "./item-drawer";
+import { useItemDrawer } from "@/context/item-drawer-context";
 
 interface DashboardItemsClientProps {
   pinnedItems: ItemCardItem[];
@@ -11,7 +10,7 @@ interface DashboardItemsClientProps {
 }
 
 export function DashboardItemsClient({ pinnedItems, recentItems }: DashboardItemsClientProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { openItem } = useItemDrawer();
 
   return (
     <>
@@ -20,7 +19,7 @@ export function DashboardItemsClient({ pinnedItems, recentItems }: DashboardItem
           <h2 className="text-lg font-semibold tracking-tight">Pinned Items</h2>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {pinnedItems.map((item) => (
-              <ItemCard key={item.id} item={item} onOpen={setSelectedId} />
+              <ItemCard key={item.id} item={item} onOpen={openItem} />
             ))}
           </div>
         </div>
@@ -35,12 +34,10 @@ export function DashboardItemsClient({ pinnedItems, recentItems }: DashboardItem
         </div>
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {recentItems.map((item) => (
-            <ItemCard key={item.id} item={item} onOpen={setSelectedId} />
+            <ItemCard key={item.id} item={item} onOpen={openItem} />
           ))}
         </div>
       </div>
-
-      <ItemDrawer itemId={selectedId} onClose={() => setSelectedId(null)} />
     </>
   );
 }

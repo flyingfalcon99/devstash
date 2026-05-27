@@ -2,11 +2,21 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
+UI Fixes - Stage 1: Critical Accessibility Issues
+
+Fix three critical accessibility/usability issues identified in the UI review:
+1. Copy button on ItemCard is not keyboard-focusable (missing tabIndex + keyboard handler)
+2. Sidebar user menu custom dropdown has no keyboard navigation (no role, no Escape/arrow keys)
+3. Duplicate ItemDrawer mounted simultaneously on dashboard (layout-level + DashboardItemsClient)
+
 ## Notes
+
+- Sidebar user menu will be replaced with ShadCN DropdownMenu for full keyboard/screen-reader support
+- Duplicate drawer resolved by extracting a shared ItemDrawerContext so all item-open triggers go through a single drawer at layout level
 
 ## History
 
