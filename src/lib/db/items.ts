@@ -12,7 +12,7 @@ export async function getPinnedItems(userId: string) {
   }
 }
 
-export async function getRecentItems(userId: string, limit = 10) {
+export async function getRecentItems(userId: string, limit: number) {
   try {
     return await prisma.item.findMany({
       where: { userId },
@@ -227,13 +227,25 @@ export async function getItemTypeBySlug(slug: string) {
   }
 }
 
-export async function getItemsByType(userId: string, typeSlug: string) {
+export async function getItemsByType(
+  userId: string,
+  typeSlug: string,
+  page: number,
+  pageSize: number
+) {
+  const where = { userId, itemType: { name: typeSlug } };
   try {
-    return await prisma.item.findMany({
-      where: { userId, itemType: { name: typeSlug } },
-      orderBy: { createdAt: 'desc' },
-      include: { itemType: true }
-    });
+    const [items, total] = await Promise.all([
+      prisma.item.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        include: { itemType: true },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.item.count({ where }),
+    ]);
+    return { items, total };
   } catch (err) {
     throw new Error(`Failed to fetch items by type: ${err instanceof Error ? err.message : String(err)}`);
   }

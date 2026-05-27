@@ -8,6 +8,7 @@ import { File, Star, Folder } from "lucide-react";
 import { buildCollectionsWithMeta } from "@/lib/dashboard-utils";
 import { CollectionCard } from "@/components/features/collections/collection-card";
 import { DashboardItemsClient } from "@/components/features/items/dashboard-items-client";
+import { DASHBOARD_COLLECTIONS_LIMIT, DASHBOARD_RECENT_ITEMS_LIMIT } from "@/lib/constants/pagination";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -16,9 +17,9 @@ export default async function DashboardPage() {
 
   const [stats, dbRecentCollections, pinnedItems, recentItems] = await Promise.all([
     getDashboardStats(userId),
-    getRecentCollections(userId, 6),
+    getRecentCollections(userId, DASHBOARD_COLLECTIONS_LIMIT),
     getPinnedItems(userId),
-    getRecentItems(userId, 10),
+    getRecentItems(userId, DASHBOARD_RECENT_ITEMS_LIMIT),
   ]);
 
   const collectionsWithMeta = buildCollectionsWithMeta(dbRecentCollections);
