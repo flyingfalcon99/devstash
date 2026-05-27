@@ -2,21 +2,15 @@
 
 ## Status
 
-In Progress
+None
 
 ## Goals
 
-Rebrand: DevStash → DevNest
-
-- New SVG logo: three concentric nest arcs replacing horizontal-line document icon
-- All user-visible "DevStash" text → "DevNest" across UI, emails, and demo seed data
-- Demo user email: demo@devstash.io → demo@devnest.io
-- OG metadata added to layout.tsx
-- Favicon: src/app/icon.svg with DevNest SVG mark
+None
 
 ## Notes
 
-Spec: context/features/rebrand-devnest-spec.md
+None
 
 ## History
 
@@ -72,3 +66,4 @@ Spec: context/features/rebrand-devnest-spec.md
 - UI Fixes Stage 2 (High Priority) - HomeNav: hamburger + slide-down panel for Features/Pricing on mobile with aria-label/aria-expanded; FeaturesSection: copy corrected from "Seven" to "Six item types"; sign-in/register: Package icon replaced with branded DevStash SVG; TopBar: NewCollectionButton hidden below lg to prevent search bar crush at tablet widths; CollectionCard: DropdownMenuTrigger opacity-0/group-hover removed, menu always visible
 - UI Fixes Stage 3 (Medium Priority) - ChaosVisual: h-[160px] sm:h-[200px] replaces hardcoded 200px style; dashboard stat cards: Favorite Collections uses Bookmark icon instead of duplicate Star; TopBar: DevStash brand name always visible, search collapses to icon-only below sm; ItemCard: copy button tap target increased from p-0.5 to p-1.5 (24px touch area)
 - UI Fixes Stage 4 (Low Priority / A11y) - HomeFooter SVG: aria-hidden="true" added; HeroSection ✦ glyph: wrapped in aria-hidden span; PricingToggle Switch: aria-label="Toggle billing period" added; sign-in + register: "← Back to home" link added at top; register: "Must be at least 8 characters." hint added below password field
+- Rebrand DevStash → DevNest - Nest arcs SVG logo across all surfaces; all UX/UI text renamed; marketing copy updated ("stash" → "nest"); demo email → demo@devnest.io; OG metadata + favicon added
